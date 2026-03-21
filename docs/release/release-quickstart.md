@@ -28,6 +28,8 @@ Publishing must stay strictly serialized.
 - Do not queue all `cargo publish` commands at once
 - If you use GitHub Actions or the local release scripts, this rule is already enforced by the workflow
 
+Before the actual public release, complete `docs/release/final-release-checklist.md`.
+
 ## Option 1: GitHub Actions
 
 Run `Release Dry Run` first, then `Release Publish`.

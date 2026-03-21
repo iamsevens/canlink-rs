@@ -23,6 +23,8 @@ The workspace cannot be published as a single bulk action. Release must remain s
 - Only then continue to the next crate
 - GitHub Actions and `scripts/release.bat` / `scripts/release.sh` already enforce this behavior; any manual release must follow the same rule
 
+Use `docs/release/final-release-checklist.md` as the final operator checklist before the real public release.
+
 ### Repository Setup Before Release
 
 - Configure `CARGO_REGISTRY_TOKEN` in GitHub repository secrets
@@ -300,7 +302,7 @@ The workspace cannot be published as a single bulk action. Release must remain s
 
 
 
-### Step 1: Prepare Release Branch
+### Step 1: Prepare Main Branch
 
 
 
@@ -313,10 +315,6 @@ git checkout main
 git pull origin main
 
 
-
-# Create release branch
-
-git checkout -b release/v0.2.0
 
 ```
 
@@ -480,45 +478,34 @@ git add -A
 
 # Commit with release message
 
-git commit -m "chore: prepare release v0.2.0
+git commit -m "chore: prepare release v0.2.0"
 
 
 
-- Update version to 0.2.0
+# Push main
 
-- Add CHANGELOG.md
-
-- Update documentation
-
-"
-
-
-
-# Push release branch
-
-git push origin release/v0.2.0
+git push origin main
 
 ```
 
 
 
-### Step 5: Create Pull Request
+### Step 5: Final Review Gate
 
 
 
-1. Go to GitHub/GitLab
+1. Ensure `main` is the release source of truth for this repository
 
-2. Create Pull Request from `release/v0.2.0` to `main`
+2. Ensure CI is green on the commit you plan to tag
 
-3. Title: "Release v0.2.0"
+3. Confirm `CHANGELOG.md`, version metadata, and README content one last time
 
-4. Description: Copy content from CHANGELOG.md
+4. Confirm the publish order:
+   `canlink-hal -> canlink-tscan-sys -> canlink-mock -> canlink-tscan -> canlink-cli`
 
-5. Wait for CI to pass
+5. Confirm whether the repository should be public before or after crates.io publish
 
-6. Get review approval
-
-7. Merge to main
+6. If using GitHub Actions approvals, verify the `crates-io` environment gate is ready
 
 
 
@@ -881,15 +868,15 @@ git push origin v0.2.0
 
 ### Release
 
-- [ ] Release branch created
-
 - [ ] Changes committed
 
-- [ ] Pull request merged
+- [ ] `main` is the release source of truth
 
 - [ ] Git tag created
 
-- [ ] GitHub release created
+- [ ] `main` and the tag are pushed
+
+- [ ] GitHub release created if needed
 
 - [ ] Published to crates.io (in order)
 
@@ -927,19 +914,14 @@ git push origin v0.2.0
 
 # Or manually:
 
-git checkout -b release/v0.2.0
+git checkout main
+git pull origin main
 
 # Update versions and CHANGELOG
 
 git commit -am "chore: prepare release v0.2.0"
 
-git push origin release/v0.2.0
-
-# Create PR, merge to main
-
-git checkout main
-
-git pull
+git push origin main
 
 git tag -a v0.2.0 -m "Release v0.2.0"
 
@@ -947,11 +929,10 @@ git push origin v0.2.0
 
 # Publish to crates.io
 
-cd canlink-hal && cargo publish
-cd ../canlink-tscan-sys && cargo publish
-cd ../canlink-mock && cargo publish
-cd ../canlink-tscan && cargo publish
-cd ../canlink-cli && cargo publish
+# Publish in the required order only
+# Wait for crates.io indexing after each crate
+# See Step 8 above for the exact commands
+# See docs/release/final-release-checklist.md for the operator checklist
 
 ```
 
