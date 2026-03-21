@@ -53,6 +53,7 @@
 #![cfg(windows)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
+#![deny(missing_docs)]
 
 pub mod functions;
 pub mod types;

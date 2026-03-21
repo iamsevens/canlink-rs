@@ -44,3 +44,9 @@ jobs:
 
       - name: Build docs
         run: cargo doc --no-deps --all-features --document-private-items
+
+      - name: Setup Rust nightly
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Check docs coverage
+        run: python scripts/check_doc_coverage.py

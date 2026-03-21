@@ -69,6 +69,8 @@
 //! - LibTSCAN library (libTSCAN.dll on Windows)
 //! - Windows 10/11 x64 platform (current implementation)
 
+#![deny(missing_docs)]
+
 mod backend;
 mod config;
 mod convert;

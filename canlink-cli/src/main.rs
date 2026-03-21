@@ -12,6 +12,8 @@
 //! - Managing message filters
 //! - Monitoring connection status
 
+#![deny(missing_docs)]
+
 mod commands;
 mod error;
 mod output;

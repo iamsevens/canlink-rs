@@ -66,6 +66,7 @@ Fill these in before starting:
 - [ ] `cargo test --all-features --workspace` passes
 - [ ] `scripts/check.bat` or `./scripts/check.sh` passes
 - [ ] `cargo doc --no-deps --all-features --workspace` passes
+- [ ] `python scripts/check_doc_coverage.py` reports 100.0% documented coverage for all publishable crates
 - [ ] Release dry-run passes for all 5 crates
 - [ ] Dry-run verification uses the required `patch.crates-io.*.path=...` overrides for unpublished internal crates
 

@@ -231,7 +231,7 @@
 //! - [`canlink-cli`](https://docs.rs/canlink-cli) - Command-line interface
 //!
 
-#![warn(missing_docs)]
+#![deny(missing_docs)]
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]
