@@ -12,7 +12,7 @@ edition = "2021"
 rust-version = "1.75"
 authors = ["CANLink-RS Contributors"]
 license = "MIT OR Apache-2.0"
-documentation = "https://docs.rs/canlink-rs"
+repository = "https://github.com/iamsevens/canlink-rs"
 
 [workspace.dependencies]
 # Serialization

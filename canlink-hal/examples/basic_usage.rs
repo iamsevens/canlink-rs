@@ -49,7 +49,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Step 5: Send CAN messages
     println!("5. Sending CAN messages...");
-    let messages_to_send = vec![
+    let messages_to_send = [
         CanMessage::new_standard(0x123, &[0x11, 0x22, 0x33])?,
         CanMessage::new_extended(0x12345678, &[0x44, 0x55, 0x66, 0x77])?,
         CanMessage::new_standard(0x456, &[0x88, 0x99, 0xAA, 0xBB, 0xCC])?,

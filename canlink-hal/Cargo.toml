@@ -5,7 +5,7 @@ edition.workspace = true
 rust-version.workspace = true
 authors.workspace = true
 license.workspace = true
-documentation.workspace = true
+repository.workspace = true
 description = "Hardware abstraction layer for CAN bus interfaces"
 keywords = ["can", "canfd", "automotive", "embedded", "hal"]
 categories = ["embedded", "hardware-support", "api-bindings"]
@@ -65,40 +65,40 @@ path = "tests/integration/mock_testing_test.rs"
 
 [[example]]
 name = "basic_usage"
-path = "../examples/basic_usage.rs"
+path = "examples/basic_usage.rs"
 
 [[example]]
 name = "backend_switching"
-path = "../examples/backend_switching.rs"
+path = "examples/backend_switching.rs"
 
 [[example]]
 name = "capability_query"
-path = "../examples/capability_query.rs"
+path = "examples/capability_query.rs"
 
 [[example]]
 name = "capability_adaptation"
-path = "../examples/capability_adaptation.rs"
+path = "examples/capability_adaptation.rs"
 
 [[example]]
 name = "mock_testing"
-path = "../examples/mock_testing.rs"
+path = "examples/mock_testing.rs"
 
 [[example]]
 name = "automated_testing"
-path = "../examples/automated_testing.rs"
+path = "examples/automated_testing.rs"
 
 [[example]]
 name = "async_usage"
-path = "../examples/async_usage.rs"
+path = "examples/async_usage.rs"
 required-features = ["async-tokio"]
 
 [[example]]
 name = "filter_config"
-path = "../examples/filter_config.rs"
+path = "examples/filter_config.rs"
 
 [[example]]
 name = "message_filtering"
-path = "../examples/message_filtering.rs"
+path = "examples/message_filtering.rs"
 
 [[bench]]
 name = "performance_bench"
@@ -123,23 +123,23 @@ required-features = ["async-tokio"]
 
 [[example]]
 name = "connection_monitor"
-path = "../examples/connection_monitor.rs"
+path = "examples/connection_monitor.rs"
 
 [[example]]
 name = "queue_overflow"
-path = "../examples/queue_overflow.rs"
+path = "examples/queue_overflow.rs"
 
 [[example]]
 name = "hot_reload"
-path = "../examples/hot_reload.rs"
+path = "examples/hot_reload.rs"
 required-features = ["hot-reload"]
 
 [[example]]
 name = "periodic_send"
-path = "../examples/periodic_send.rs"
+path = "examples/periodic_send.rs"
 required-features = ["periodic"]
 
 [[example]]
 name = "isotp_transfer"
-path = "../examples/isotp_transfer.rs"
+path = "examples/isotp_transfer.rs"
 required-features = ["isotp"]

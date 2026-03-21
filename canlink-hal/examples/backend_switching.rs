@@ -7,6 +7,9 @@
 //! - Creating backends from the registry
 //! - Switching between backends at runtime
 //! - Using the same application code with different backends
+//!
+//! Run with:
+//! `cargo run -p canlink-hal --example backend_switching --features "canlink-hal/isotp canlink-hal/periodic"`
 
 use canlink_hal::{BackendConfig, BackendRegistry, CanBackend, CanMessage};
 use canlink_mock::{MockBackendFactory, MockConfig};
