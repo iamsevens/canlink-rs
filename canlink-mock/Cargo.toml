@@ -1,0 +1,37 @@
+[package]
+name = "canlink-mock"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+documentation.workspace = true
+description = "Mock backend for CAN hardware abstraction layer testing"
+keywords = ["can", "canfd", "mock", "testing"]
+categories = ["development-tools::testing", "embedded"]
+
+[dependencies]
+canlink-hal = { version = "0.2.0", path = "../canlink-hal" }
+serde = { workspace = true }
+serde_json = "1.0"
+thiserror = { workspace = true }
+
+# Optional async support
+tokio = { workspace = true, optional = true }
+async-std = { workspace = true, optional = true }
+
+# Optional tracing support
+tracing = { version = "0.1", optional = true }
+
+[dev-dependencies]
+criterion = { workspace = true }
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+
+[features]
+default = []
+async = ["canlink-hal/async"]
+async-tokio = ["async", "canlink-hal/async-tokio", "tokio"]
+async-async-std = ["async", "canlink-hal/async-async-std", "async-std"]
+
+# Tracing support
+tracing = ["dep:tracing", "canlink-hal/tracing"]

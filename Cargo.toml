@@ -1,0 +1,50 @@
+[workspace]
+resolver = "2"
+members = [
+    "canlink-hal",
+    "canlink-mock",
+    "canlink-cli", "canlink-tscan-sys", "canlink-tscan",
+]
+
+[workspace.package]
+version = "0.2.0"
+edition = "2021"
+rust-version = "1.75"
+authors = ["CANLink-RS Contributors"]
+license = "MIT OR Apache-2.0"
+documentation = "https://docs.rs/canlink-rs"
+
+[workspace.dependencies]
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
+
+# Error handling
+thiserror = "1.0"
+
+# Version management
+semver = "1.0"
+
+# Bit flags
+bitflags = "2.4"
+
+# Collections
+indexmap = "2.0"
+
+# CLI
+clap = { version = "4.4", features = ["derive", "cargo"] }
+
+# Async support (optional)
+tokio = { version = "1.35", features = ["full"] }
+async-std = { version = "1.12" }
+
+# Testing
+criterion = { version = "0.5", features = ["async_tokio"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+[profile.bench]
+inherits = "release"

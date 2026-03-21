@@ -1,0 +1,30 @@
+[package]
+name = "canlink-tscan"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+documentation.workspace = true
+description = "Rust CAN backend via LibTSCAN, validated on TOSUN hardware"
+keywords = ["can", "canbus", "tsmaster", "hardware"]
+categories = ["hardware-support", "api-bindings"]
+
+[dependencies]
+canlink-hal = { version = "0.2.0", path = "../canlink-hal" }
+canlink-tscan-sys = { version = "0.2.0", path = "../canlink-tscan-sys" }
+thiserror = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = "1.0"
+toml = { workspace = true }
+
+[dev-dependencies]
+criterion = { workspace = true }
+
+[[bench]]
+name = "abstraction_overhead_bench"
+harness = false
+
+[package.metadata.docs.rs]
+default-target = "x86_64-pc-windows-msvc"
+targets = ["x86_64-pc-windows-msvc"]

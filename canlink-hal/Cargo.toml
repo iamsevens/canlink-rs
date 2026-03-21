@@ -1,0 +1,145 @@
+[package]
+name = "canlink-hal"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+documentation.workspace = true
+description = "Hardware abstraction layer for CAN bus interfaces"
+keywords = ["can", "canfd", "automotive", "embedded", "hal"]
+categories = ["embedded", "hardware-support", "api-bindings"]
+
+[dependencies]
+serde = { workspace = true }
+toml = { workspace = true }
+thiserror = { workspace = true }
+semver = { workspace = true }
+bitflags = { workspace = true }
+indexmap = { workspace = true }
+
+# Optional async support
+tokio = { workspace = true, optional = true }
+async-std = { workspace = true, optional = true }
+
+# Optional tracing support (FR-013)
+tracing = { version = "0.1", optional = true }
+
+# Optional hot-reload support (FR-014)
+notify = { version = "6.1", optional = true }
+
+[dev-dependencies]
+criterion = { workspace = true }
+canlink-mock = { path = "../canlink-mock" }
+tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time", "sync", "test-util"] }
+tempfile = "3.10"
+
+[features]
+default = []
+async = []
+async-tokio = ["async", "tokio", "canlink-mock/async-tokio"]
+async-async-std = ["async", "async-std", "canlink-mock/async-async-std"]
+
+# Tracing/logging support (FR-013)
+tracing = ["dep:tracing"]
+
+# Hot-reload support (FR-014)
+hot-reload = ["dep:notify"]
+
+# Periodic message sending (004 spec FR-001 to FR-006)
+periodic = ["async-tokio"]
+
+# ISO-TP protocol support (004 spec FR-007 to FR-019)
+isotp = ["async-tokio"]
+
+# Full feature set
+full = ["async-tokio", "tracing", "hot-reload", "periodic", "isotp"]
+
+[[test]]
+name = "backend_switching_test"
+path = "tests/integration/backend_switching_test.rs"
+
+[[test]]
+name = "mock_testing_test"
+path = "tests/integration/mock_testing_test.rs"
+
+[[example]]
+name = "basic_usage"
+path = "../examples/basic_usage.rs"
+
+[[example]]
+name = "backend_switching"
+path = "../examples/backend_switching.rs"
+
+[[example]]
+name = "capability_query"
+path = "../examples/capability_query.rs"
+
+[[example]]
+name = "capability_adaptation"
+path = "../examples/capability_adaptation.rs"
+
+[[example]]
+name = "mock_testing"
+path = "../examples/mock_testing.rs"
+
+[[example]]
+name = "automated_testing"
+path = "../examples/automated_testing.rs"
+
+[[example]]
+name = "async_usage"
+path = "../examples/async_usage.rs"
+required-features = ["async-tokio"]
+
+[[example]]
+name = "filter_config"
+path = "../examples/filter_config.rs"
+
+[[example]]
+name = "message_filtering"
+path = "../examples/message_filtering.rs"
+
+[[bench]]
+name = "performance_bench"
+harness = false
+
+[[bench]]
+name = "capability_bench"
+harness = false
+
+[[bench]]
+name = "queue_bench"
+harness = false
+
+[[bench]]
+name = "filter_bench"
+harness = false
+
+[[bench]]
+name = "async_bench"
+harness = false
+required-features = ["async-tokio"]
+
+[[example]]
+name = "connection_monitor"
+path = "../examples/connection_monitor.rs"
+
+[[example]]
+name = "queue_overflow"
+path = "../examples/queue_overflow.rs"
+
+[[example]]
+name = "hot_reload"
+path = "../examples/hot_reload.rs"
+required-features = ["hot-reload"]
+
+[[example]]
+name = "periodic_send"
+path = "../examples/periodic_send.rs"
+required-features = ["periodic"]
+
+[[example]]
+name = "isotp_transfer"
+path = "../examples/isotp_transfer.rs"
+required-features = ["isotp"]

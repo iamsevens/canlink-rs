@@ -1,0 +1,88 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock  # 对于库项目取消注释; 对于二进制项目保留
+
+# 编译输出
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+
+# 测试和基准测试
+*.profraw
+*.profdata
+
+# IDE 和编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Claude Code 配置 (本地配置，不同步)
+.claude/
+
+# Specify 工作目录 (规范和计划文档)
+# 注意: specs/ 目录应该提交，包含项目规范
+# /specs/
+
+# 环境变量和密钥
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# 日志文件
+*.log
+logs/
+_logs/*
+
+# 操作系统
+Thumbs.db
+Desktop.ini
+
+# 临时文件
+*.tmp
+*.temp
+*.bak
+*.cache
+
+# 文档生成
+/doc/
+/docs/api/
+
+# 覆盖率报告
+/coverage/
+*.gcda
+*.gcno
+*.gcov
+tarpaulin-report.html
+cobertura.xml
+
+# 性能分析
+perf.data
+perf.data.old
+flamegraph.svg
+
+# 依赖缓存 (CI/CD 可能使用)
+.cargo/
+
+# Local logs and evidence
+_logs/
+task_plan.md
+findings.md
+progress.md
+AGENTS.md
+CLAUDE.md
+
+# Vendor raw materials are kept local only, not distributed in the public repo
+/docs/vendor/tsmaster/api/
+/docs/vendor/tsmaster/examples/
+/docs/vendor/tsmaster/headers/
+/docs/vendor/tsmaster/libs/

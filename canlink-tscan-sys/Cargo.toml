@@ -1,0 +1,24 @@
+[package]
+name = "canlink-tscan-sys"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+documentation.workspace = true
+description = "Low-level Rust FFI bindings to LibTSCAN for CAN hardware access"
+keywords = ["can", "canbus", "tsmaster", "ffi"]
+categories = ["external-ffi-bindings", "hardware-support"]
+
+[dependencies]
+
+[build-dependencies]
+
+[target.'cfg(windows)'.dependencies]
+winapi = { version = "0.3", features = ["libloaderapi"] }
+
+[dev-dependencies]
+
+[package.metadata.docs.rs]
+default-target = "x86_64-pc-windows-msvc"
+targets = ["x86_64-pc-windows-msvc"]
