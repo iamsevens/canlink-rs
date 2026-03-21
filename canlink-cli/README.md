@@ -236,7 +236,7 @@ canlink --json list
 ### Building from Source
 
 ```bash
-git clone <your-public-repository-url>
+git clone https://github.com/iamsevens/canlink-rs.git
 cd canlink-rs
 cargo build --release -p canlink-cli
 ```

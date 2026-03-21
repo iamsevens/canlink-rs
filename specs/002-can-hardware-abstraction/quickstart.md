@@ -458,5 +458,5 @@ A: 抽象层设计为零成本抽象，性能开销 < 5%。具体取决于硬件
 ## 获取帮助
 
 - 📝 查看完整文档：`cargo doc --open`
-- 🐛 报告问题：[GitHub Issues](https://github.com/your-org/canlink-rs/issues)
-- 💬 讨论：[GitHub Discussions](https://github.com/your-org/canlink-rs/discussions)
+- 🐛 报告问题：[GitHub Issues](https://github.com/iamsevens/canlink-rs/issues)
+- 💬 讨论：[GitHub Discussions](https://github.com/iamsevens/canlink-rs/discussions)

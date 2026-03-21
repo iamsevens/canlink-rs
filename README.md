@@ -150,7 +150,7 @@
 ### 1. 构建工作区
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/iamsevens/canlink-rs.git
 cd canlink-rs
 cargo build --workspace
 ```

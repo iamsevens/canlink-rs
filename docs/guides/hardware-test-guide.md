@@ -340,7 +340,7 @@ cargo run -p canlink-tscan --example <example> -- <args> *> result.log
 time=2026-03-17T10:00:01+08:00 module=1 step=scan result=PASS detail="found=1"
 time=2026-03-17T10:00:02+08:00 module=1 step=open result=PASS detail="handle=0x1234ABCD"
 time=2026-03-17T10:00:03+08:00 module=1 step=get_info result=PASS detail="model=TSMaster Mini"
-time=2026-03-17T10:00:04+08:00 module=1 step=get_info result=PASS detail="serial=70195DBC54A272AD"
+time=2026-03-17T10:00:04+08:00 module=1 step=get_info result=PASS detail="serial=<device-serial>"
 time=2026-03-17T10:00:05+08:00 module=1 step=close result=PASS detail="error=0"
 time=2026-03-17T10:00:06+08:00 module=1 step=summary result=PASS detail="open_close_ok"
 ```
