@@ -1,171 +1,172 @@
 @echo off
 REM Release automation script for CANLink-RS (Windows)
 REM Usage: scripts\release.bat <version>
-REM Example: scripts\release.bat 0.1.0
+REM Example: scripts\release.bat 0.3.0
 
 setlocal enabledelayedexpansion
 
-set VERSION=%1
+set "VERSION=%~1"
 
 if "%VERSION%"=="" (
-    echo ❌ Error: Version number required
+    echo Error: version number required
     echo Usage: scripts\release.bat ^<version^>
-    echo Example: scripts\release.bat 0.1.0
+    echo Example: scripts\release.bat 0.3.0
     exit /b 1
 )
 
 echo.
-echo ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-echo 🚀 CANLink-RS Release Script
-echo ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+echo ========================================
+echo CANLink-RS Release Script
+echo ========================================
 echo Version: v%VERSION%
 echo.
 
-REM Step 1: Pre-release checks
-echo Step 1: Running pre-release checks...
+echo Step 1: running pre-release checks...
 echo.
 
-echo 📋 Running tests...
+echo Running tests...
 cargo test --all-features --workspace
 if %ERRORLEVEL% NEQ 0 (
-    echo ❌ Tests failed!
+    echo Error: tests failed
     exit /b 1
 )
 
-echo 📋 Running quality checks...
+echo Running quality checks...
 call scripts\check.bat
 if %ERRORLEVEL% NEQ 0 (
-    echo ❌ Quality checks failed!
+    echo Error: quality checks failed
     exit /b 1
 )
 
-echo 📋 Building documentation...
+echo Building documentation...
 cargo doc --no-deps --all-features --workspace
 if %ERRORLEVEL% NEQ 0 (
-    echo ❌ Documentation build failed!
+    echo Error: documentation build failed
     exit /b 1
 )
 
-echo ✓ All pre-release checks passed
+echo Pre-release checks passed.
 echo.
 
-REM Step 2: Update version numbers
-echo Step 2: Updating version numbers...
-echo.
-
-REM Note: Manual version update required on Windows
-echo ⚠ Please update version to %VERSION% in Cargo.toml
-echo Press any key to continue after updating...
+echo Step 2: update workspace version in Cargo.toml...
+echo Update [workspace.package].version to %VERSION%, then press any key.
 pause >nul
 
-echo ✓ Version updated to %VERSION%
 echo.
-
-REM Step 3: Create CHANGELOG entry
-echo Step 3: CHANGELOG.md
-echo.
-
+echo Step 3: verify CHANGELOG.md...
 if not exist CHANGELOG.md (
-    echo ⚠ CHANGELOG.md not found. Please create it manually.
-    echo Press any key to continue after creating CHANGELOG.md...
-    pause >nul
-) else (
-    echo ✓ CHANGELOG.md exists
+    echo Error: CHANGELOG.md not found
+    exit /b 1
 )
+echo CHANGELOG.md found.
 echo.
 
-REM Step 4: Commit changes
-echo Step 4: Committing changes...
-echo.
-
+echo Step 4: committing release preparation...
 git add -A
 git commit -m "chore: prepare release v%VERSION%"
 if %ERRORLEVEL% NEQ 0 (
-    echo ⚠ No changes to commit or commit failed
+    echo Note: no changes were committed.
 )
-
-echo ✓ Changes committed
 echo.
 
-REM Step 5: Create tag
-echo Step 5: Creating git tag...
-echo.
-
+echo Step 5: creating git tag...
 git tag -a "v%VERSION%" -m "Release v%VERSION%"
 if %ERRORLEVEL% NEQ 0 (
-    echo ❌ Failed to create tag. Tag may already exist.
+    echo Error: failed to create tag. It may already exist.
     exit /b 1
 )
-
-echo ✓ Tag v%VERSION% created
+echo Tag v%VERSION% created.
 echo.
 
-REM Step 6: Push changes
-echo Step 6: Pushing to remote...
-echo.
-
-set /p PUSH="Push changes to remote? (y/n): "
-if /i "%PUSH%"=="y" (
+set /p PUSH=Push changes to remote? (y/n): 
+if /I "%PUSH%"=="y" (
     git push origin main
+    if %ERRORLEVEL% NEQ 0 exit /b 1
     git push origin "v%VERSION%"
-    echo ✓ Changes pushed to remote
+    if %ERRORLEVEL% NEQ 0 exit /b 1
+    echo Remote push completed.
 ) else (
-    echo ⚠ Skipped pushing to remote
-    echo Run manually: git push origin main ^&^& git push origin v%VERSION%
+    echo Skipped remote push.
 )
 echo.
 
-REM Step 7: Publish to crates.io
-echo Step 7: Publishing to crates.io...
-echo.
+set /p PUBLISH=Publish to crates.io? (y/n): 
+if /I "%PUBLISH%"=="y" (
+    call :publish_crate canlink-hal %VERSION%
+    if %ERRORLEVEL% NEQ 0 exit /b 1
 
-set /p PUBLISH="Publish to crates.io? (y/n): "
-if /i "%PUBLISH%"=="y" (
-    echo Publishing canlink-hal...
-    cd canlink-hal
-    cargo publish --dry-run
-    cargo publish
-    cd ..
+    call :publish_crate canlink-tscan-sys %VERSION%
+    if %ERRORLEVEL% NEQ 0 exit /b 1
 
-    echo Waiting for crates.io to index...
-    timeout /t 120 /nobreak >nul
+    call :publish_crate canlink-mock %VERSION%
+    if %ERRORLEVEL% NEQ 0 exit /b 1
 
-    echo Publishing canlink-mock...
-    cd canlink-mock
-    cargo publish --dry-run
-    cargo publish
-    cd ..
+    call :publish_crate canlink-tscan %VERSION%
+    if %ERRORLEVEL% NEQ 0 exit /b 1
 
-    echo Waiting for crates.io to index...
-    timeout /t 120 /nobreak >nul
+    call :publish_crate canlink-cli %VERSION%
+    if %ERRORLEVEL% NEQ 0 exit /b 1
 
-    echo Publishing canlink-cli...
-    cd canlink-cli
-    cargo publish --dry-run
-    cargo publish
-    cd ..
-
-    echo ✓ Published to crates.io
+    echo crates.io publish completed.
 ) else (
-    echo ⚠ Skipped publishing to crates.io
-    echo Run manually:
-    echo   cd canlink-hal ^&^& cargo publish
-    echo   cd canlink-mock ^&^& cargo publish
-    echo   cd canlink-cli ^&^& cargo publish
+    echo Skipped crates.io publish.
+    echo Recommended manual order:
+    echo   canlink-hal
+    echo   canlink-tscan-sys
+    echo   canlink-mock
+    echo   canlink-tscan
+    echo   canlink-cli
 )
 echo.
 
-REM Summary
-echo ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-echo 🎉 Release v%VERSION% Complete!
-echo ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-echo.
-echo Next steps:
-echo 1. Create a release on your public repository hosting page
-echo 2. Verify crates.io: https://crates.io/crates/canlink-hal
-echo 3. Test installation: cargo install canlink-cli
-echo 4. Announce release
-echo.
-echo ✓ Release process completed successfully!
+echo ========================================
+echo Release flow finished
 
-endlocal
+echo ========================================
+echo Verify crates.io pages:
+echo   https://crates.io/crates/canlink-hal
+echo   https://crates.io/crates/canlink-tscan-sys
+echo   https://crates.io/crates/canlink-mock
+echo   https://crates.io/crates/canlink-tscan
+echo   https://crates.io/crates/canlink-cli
+echo.
+echo Test installation:
+echo   cargo install canlink-cli
+echo   canlink --version
+
+goto :eof
+
+:publish_crate
+set "CRATE=%~1"
+set "VER=%~2"
+echo Publishing %CRATE%...
+cargo publish -p %CRATE% --dry-run --locked
+if %ERRORLEVEL% NEQ 0 (
+    echo Error: dry-run failed for %CRATE%
+    exit /b 1
+)
+cargo publish -p %CRATE% --locked
+if %ERRORLEVEL% NEQ 0 (
+    echo Error: publish failed for %CRATE%
+    exit /b 1
+)
+call :wait_for_crate_version %CRATE% %VER%
+if %ERRORLEVEL% NEQ 0 exit /b 1
+exit /b 0
+
+:wait_for_crate_version
+set "CRATE=%~1"
+set "VER=%~2"
+for /l %%I in (1,1,30) do (
+    set "SEARCH_LINE="
+    for /f "usebackq delims=" %%L in (`cargo search %CRATE% --limit 1 2^>nul`) do set "SEARCH_LINE=%%L"
+    echo Waiting for %CRATE% %VER% to be indexed... attempt %%I/30
+    echo !SEARCH_LINE! | findstr /C:"%CRATE% = \"%VER%\"" >nul
+    if not errorlevel 1 (
+        echo %CRATE% %VER% is indexed.
+        exit /b 0
+    )
+    timeout /t 20 /nobreak >nul
+)
+echo Error: timed out waiting for %CRATE% %VER% to appear on crates.io.
+exit /b 1

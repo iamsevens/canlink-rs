@@ -15,7 +15,6 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
-  CANLINK_TSCAN_BUNDLE_DIR: ${{ github.workspace }}\docs\vendor\tsmaster\examples\LibTSCAN\lib_extracted\lib\lib\windows\x64
 
 jobs:
   publish:
@@ -56,9 +55,8 @@ jobs:
             for ($i = 0; $i -lt 30; $i++) {
               $line = cargo search $crate --limit 1
               if ($LASTEXITCODE -eq 0) {
-                $escapedCrate = [regex]::Escape($crate)
-                $escapedVersion = [regex]::Escape($version)
-                if ($line -match "^$escapedCrate\\s*=\\s*`"$escapedVersion`"") {
+                $expected = "$crate = `"$version`""
+                if ($line -like "$expected*") {
                   Write-Host "$crate $version is indexed."
                   return
                 }
@@ -71,13 +69,13 @@ jobs:
           cargo publish -p canlink-hal --locked
           Wait-ForCrateVersion "canlink-hal" $env:RELEASE_VERSION
 
-          cargo publish -p canlink-mock --locked
-          Wait-ForCrateVersion "canlink-mock" $env:RELEASE_VERSION
-
           cargo publish -p canlink-tscan-sys --locked
           Wait-ForCrateVersion "canlink-tscan-sys" $env:RELEASE_VERSION
 
-          cargo publish -p canlink-tscan --locked --no-verify
+          cargo publish -p canlink-mock --locked
+          Wait-ForCrateVersion "canlink-mock" $env:RELEASE_VERSION
+
+          cargo publish -p canlink-tscan --locked
           Wait-ForCrateVersion "canlink-tscan" $env:RELEASE_VERSION
 
-          cargo publish -p canlink-cli --locked --no-verify
+          cargo publish -p canlink-cli --locked

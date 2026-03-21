@@ -6,7 +6,6 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
-  CANLINK_TSCAN_BUNDLE_DIR: ${{ github.workspace }}\docs\vendor\tsmaster\examples\LibTSCAN\lib_extracted\lib\lib\windows\x64
   CANLINK_TSCAN_ALLOW_MISSING_BUNDLE: "1"
 
 jobs:
@@ -21,35 +20,26 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Check LibTSCAN bundle path
-        shell: powershell
-        run: |
-          if (!(Test-Path $env:CANLINK_TSCAN_BUNDLE_DIR)) {
-            Write-Warning "CANLINK_TSCAN_BUNDLE_DIR not found: $env:CANLINK_TSCAN_BUNDLE_DIR"
-          } else {
-            Write-Host "Using CANLINK_TSCAN_BUNDLE_DIR=$env:CANLINK_TSCAN_BUNDLE_DIR"
-          }
-
       - name: Dry run canlink-hal
         run: cargo publish --dry-run -p canlink-hal --locked
+
+      - name: Dry run canlink-tscan-sys
+        run: cargo publish --dry-run -p canlink-tscan-sys --locked
 
       - name: Dry run canlink-mock
         run: >
           cargo publish --dry-run -p canlink-mock --locked
           --config "patch.crates-io.canlink-hal.path='canlink-hal'"
 
-      - name: Dry run canlink-tscan-sys
-        run: cargo publish --dry-run -p canlink-tscan-sys --locked
-
       - name: Dry run canlink-tscan
         run: >
-          cargo publish --dry-run --no-verify -p canlink-tscan --locked
+          cargo publish --dry-run -p canlink-tscan --locked
           --config "patch.crates-io.canlink-hal.path='canlink-hal'"
           --config "patch.crates-io.canlink-tscan-sys.path='canlink-tscan-sys'"
 
       - name: Dry run canlink-cli
         run: >
-          cargo publish --dry-run --no-verify -p canlink-cli --locked
+          cargo publish --dry-run -p canlink-cli --locked
           --config "patch.crates-io.canlink-hal.path='canlink-hal'"
           --config "patch.crates-io.canlink-mock.path='canlink-mock'"
           --config "patch.crates-io.canlink-tscan.path='canlink-tscan'"

@@ -1,180 +1,131 @@
 #!/usr/bin/env bash
 # Release automation script for CANLink-RS
 # Usage: ./scripts/release.sh <version>
-# Example: ./scripts/release.sh 0.1.0
+# Example: ./scripts/release.sh 0.3.0
 
-set -e
+set -euo pipefail
 
-VERSION=$1
+VERSION="${1:-}"
 
 if [ -z "$VERSION" ]; then
-    echo "❌ Error: Version number required"
-    echo "Usage: ./scripts/release.sh <version>"
-    echo "Example: ./scripts/release.sh 0.1.0"
+    echo "Error: version number required" >&2
+    echo "Usage: ./scripts/release.sh <version>" >&2
+    echo "Example: ./scripts/release.sh 0.3.0" >&2
     exit 1
 fi
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+wait_for_crate_version() {
+    local crate="$1"
+    local version="$2"
+    local line=""
 
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🚀 CANLink-RS Release Script"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Version: v$VERSION"
-echo ""
+    for attempt in $(seq 1 30); do
+        line="$(cargo search "$crate" --limit 1 2>/dev/null || true)"
+        echo "Waiting for ${crate} ${version} to be indexed... attempt ${attempt}/30"
+        if printf '%s\n' "$line" | grep -F "${crate} = \"${version}\"" >/dev/null; then
+            echo "${crate} ${version} is indexed."
+            return 0
+        fi
+        sleep 20
+    done
 
-# Step 1: Pre-release checks
-echo -e "${BLUE}Step 1: Running pre-release checks...${NC}"
-echo ""
-
-echo "📋 Running tests..."
-cargo test --all-features --workspace || {
-    echo -e "${RED}❌ Tests failed!${NC}"
-    exit 1
+    echo "Error: timed out waiting for ${crate} ${version} to appear on crates.io." >&2
+    return 1
 }
 
-echo "📋 Running quality checks..."
-./scripts/check.sh || {
-    echo -e "${RED}❌ Quality checks failed!${NC}"
-    exit 1
+publish_crate() {
+    local crate="$1"
+    local version="$2"
+
+    echo "Publishing ${crate}..."
+    cargo publish -p "$crate" --dry-run --locked
+    cargo publish -p "$crate" --locked
+    wait_for_crate_version "$crate" "$version"
 }
 
-echo "📋 Building documentation..."
-cargo doc --no-deps --all-features --workspace || {
-    echo -e "${RED}❌ Documentation build failed!${NC}"
-    exit 1
-}
+echo
+echo "========================================"
+echo "CANLink-RS Release Script"
+echo "========================================"
+echo "Version: v${VERSION}"
+echo
 
-echo -e "${GREEN}✓ All pre-release checks passed${NC}"
-echo ""
+echo "Step 1: running pre-release checks..."
+echo
 
-# Step 2: Update version numbers
-echo -e "${BLUE}Step 2: Updating version numbers...${NC}"
-echo ""
+echo "Running tests..."
+cargo test --all-features --workspace
 
-# Update workspace Cargo.toml
-sed -i.bak "s/^version = \".*\"/version = \"$VERSION\"/" Cargo.toml
-rm Cargo.toml.bak
+echo "Running quality checks..."
+./scripts/check.sh
 
-echo -e "${GREEN}✓ Version updated to $VERSION${NC}"
-echo ""
+echo "Building documentation..."
+cargo doc --no-deps --all-features --workspace
 
-# Step 3: Create CHANGELOG entry
-echo -e "${BLUE}Step 3: CHANGELOG.md${NC}"
-echo ""
+echo "Pre-release checks passed."
+echo
 
+echo "Step 2: update workspace version in Cargo.toml..."
+echo "Update [workspace.package].version to ${VERSION}, then press Enter."
+read -r
+
+echo "Step 3: verify CHANGELOG.md..."
 if [ ! -f CHANGELOG.md ]; then
-    echo -e "${YELLOW}⚠ CHANGELOG.md not found. Please create it manually.${NC}"
-    echo "Press Enter to continue after creating CHANGELOG.md..."
-    read
-else
-    echo -e "${GREEN}✓ CHANGELOG.md exists${NC}"
-fi
-echo ""
-
-# Step 4: Commit changes
-echo -e "${BLUE}Step 4: Committing changes...${NC}"
-echo ""
-
-git add -A
-git commit -m "chore: prepare release v$VERSION
-
-- Update version to $VERSION
-- Update CHANGELOG.md
-- Update documentation
-" || {
-    echo -e "${YELLOW}⚠ No changes to commit${NC}"
-}
-
-echo -e "${GREEN}✓ Changes committed${NC}"
-echo ""
-
-# Step 5: Create tag
-echo -e "${BLUE}Step 5: Creating git tag...${NC}"
-echo ""
-
-git tag -a "v$VERSION" -m "Release v$VERSION
-
-See CHANGELOG.md for details.
-" || {
-    echo -e "${RED}❌ Failed to create tag. Tag may already exist.${NC}"
+    echo "Error: CHANGELOG.md not found" >&2
     exit 1
-}
+fi
+echo "CHANGELOG.md found."
+echo
 
-echo -e "${GREEN}✓ Tag v$VERSION created${NC}"
-echo ""
+echo "Step 4: committing release preparation..."
+git add -A
+git commit -m "chore: prepare release v${VERSION}" || echo "Note: no changes were committed."
+echo
 
-# Step 6: Push changes
-echo -e "${BLUE}Step 6: Pushing to remote...${NC}"
-echo ""
+echo "Step 5: creating git tag..."
+git tag -a "v${VERSION}" -m "Release v${VERSION}"
+echo "Tag v${VERSION} created."
+echo
 
-echo "Push changes to remote? (y/n)"
-read -r response
+read -r -p "Push changes to remote? (y/n): " response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
     git push origin main
-    git push origin "v$VERSION"
-    echo -e "${GREEN}✓ Changes pushed to remote${NC}"
+    git push origin "v${VERSION}"
+    echo "Remote push completed."
 else
-    echo -e "${YELLOW}⚠ Skipped pushing to remote${NC}"
-    echo "Run manually: git push origin main && git push origin v$VERSION"
+    echo "Skipped remote push."
 fi
-echo ""
+echo
 
-# Step 7: Publish to crates.io
-echo -e "${BLUE}Step 7: Publishing to crates.io...${NC}"
-echo ""
-
-echo "Publish to crates.io? (y/n)"
-read -r response
+read -r -p "Publish to crates.io? (y/n): " response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-    echo "Publishing canlink-hal..."
-    cd canlink-hal
-    cargo publish --dry-run
-    cargo publish
-    cd ..
-
-    echo "Waiting for crates.io to index..."
-    sleep 120
-
-    echo "Publishing canlink-mock..."
-    cd canlink-mock
-    cargo publish --dry-run
-    cargo publish
-    cd ..
-
-    echo "Waiting for crates.io to index..."
-    sleep 120
-
-    echo "Publishing canlink-cli..."
-    cd canlink-cli
-    cargo publish --dry-run
-    cargo publish
-    cd ..
-
-    echo -e "${GREEN}✓ Published to crates.io${NC}"
+    publish_crate canlink-hal "$VERSION"
+    publish_crate canlink-tscan-sys "$VERSION"
+    publish_crate canlink-mock "$VERSION"
+    publish_crate canlink-tscan "$VERSION"
+    publish_crate canlink-cli "$VERSION"
+    echo "crates.io publish completed."
 else
-    echo -e "${YELLOW}⚠ Skipped publishing to crates.io${NC}"
-    echo "Run manually:"
-    echo "  cd canlink-hal && cargo publish"
-    echo "  cd canlink-mock && cargo publish"
-    echo "  cd canlink-cli && cargo publish"
+    echo "Skipped crates.io publish."
+    echo "Recommended manual order:"
+    echo "  canlink-hal"
+    echo "  canlink-tscan-sys"
+    echo "  canlink-mock"
+    echo "  canlink-tscan"
+    echo "  canlink-cli"
 fi
-echo ""
+echo
 
-# Summary
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🎉 Release v$VERSION Complete!"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
-echo "Next steps:"
-echo "1. Create a release on your public repository hosting page"
-echo "2. Verify crates.io: https://crates.io/crates/canlink-hal"
-echo "3. Test installation: cargo install canlink-cli"
-echo "4. Announce release"
-echo ""
-echo -e "${GREEN}✓ Release process completed successfully!${NC}"
+echo "========================================"
+echo "Release flow finished"
+echo "========================================"
+echo "Verify crates.io pages:"
+echo "  https://crates.io/crates/canlink-hal"
+echo "  https://crates.io/crates/canlink-tscan-sys"
+echo "  https://crates.io/crates/canlink-mock"
+echo "  https://crates.io/crates/canlink-tscan"
+echo "  https://crates.io/crates/canlink-cli"
+echo
+echo "Test installation:"
+echo "  cargo install canlink-cli"
+echo "  canlink --version"

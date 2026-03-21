@@ -1,29 +1,28 @@
-# Release Guide - CANLink-RS v0.2.0
+# Release Guide - CANLink-RS
 
-## GitHub Actions 发布流程（当前推荐）
+## GitHub Actions Release Flow
 
-- `CI`：`.github/workflows/ci.yml`
-  - 触发：`push` / `pull_request` 到 `main`
-  - 作用：执行 `fmt + clippy + build + test + doc test + doc`，作为主干质量门禁
-- `Release Dry Run`：`.github/workflows/release-dryrun.yml`
-  - 触发：`workflow_dispatch`
-  - 作用：发布前对全部 crate 执行 `cargo publish --dry-run`（对尚未上架依赖使用 `patch.crates-io` 指向工作区本地路径）
-- `Release Publish`：`.github/workflows/release-publish.yml`
-  - 触发：`workflow_dispatch`
-  - 输入：`version`、`confirm=publish`
-  - 作用：按依赖顺序发布到 crates.io，并等待索引生效后再发布下一个包
+- `CI`: `.github/workflows/ci.yml`
+  - Trigger: `push` / `pull_request` to `main`
+  - Purpose: runs `fmt + clippy + build + test + doc test + doc` as the main branch quality gate
+- `Release Dry Run`: `.github/workflows/release-dryrun.yml`
+  - Trigger: `workflow_dispatch`
+  - Purpose: runs `cargo publish --dry-run` for all 5 crates and applies `patch.crates-io` for unpublished internal dependencies
+- `Release Publish`: `.github/workflows/release-publish.yml`
+  - Trigger: `workflow_dispatch`
+  - Inputs: `version`, `confirm=publish`
+  - Purpose: publishes `canlink-hal -> canlink-tscan-sys -> canlink-mock -> canlink-tscan -> canlink-cli` and waits for crates.io indexing after each step
 
-### 发布前仓库设置
+### Repository Setup Before Release
 
-- 在 GitHub 仓库 Secret 中配置：`CARGO_REGISTRY_TOKEN`
-- 建议配置 `main` 分支保护，必需状态检查至少包含 `CI`
-- `Release Publish` 默认使用 `environment: crates-io`，可在 GitHub 中加人工审批
+- Configure `CARGO_REGISTRY_TOKEN` in GitHub repository secrets
+- Protect `main` and require at least the `CI` status check
+- `Release Publish` uses `environment: crates-io`, so you can attach manual approval if needed
 
-### LibTSCAN 路径
+### LibTSCAN Build Note
 
-- 工作流默认设置：
-  - `CANLINK_TSCAN_BUNDLE_DIR=${{ github.workspace }}\\docs\\vendor\\tsmaster\\examples\\LibTSCAN\\lib_extracted\\lib\\lib\\windows\\x64`
-- 如路径变更，可在 workflow `env` 中调整
+- `canlink-tscan-sys` allows missing local vendor bundles during `cargo package` / `cargo publish --dry-run` verification builds
+- For local development or hardware debugging, set `CANLINK_TSCAN_BUNDLE_DIR` when you want to force a specific bundle path
 
 
 
@@ -129,34 +128,20 @@
 
 
 
-- [ ] **Update version in Cargo.toml files**
+- [ ] **Update version in Cargo.toml**
+- [ ] **Update version in Cargo.toml**
 
-  - `Cargo.toml` (workspace)
-
-  - `canlink-hal/Cargo.toml`
-
-  - `canlink-mock/Cargo.toml`
-
-  - `canlink-cli/Cargo.toml`
-
-
+  This workspace uses a shared version, so only the workspace root `Cargo.toml` needs to change:
 
   ```toml
-
-  [package]
-
+  [workspace.package]
   version = "0.2.0"
-
   ```
-
-
 
 - [ ] **Update version in documentation**
 
   - README.md files
-
   - CHANGELOG.md
-
   - Documentation examples
 
 
@@ -167,13 +152,17 @@
 
 - [ ] **Review README.md files**
 
-  - Root README.md
+  - Root `README.md`
 
-  - canlink-hal/README.md (if exists)
+  - `canlink-hal/README.md`
 
-  - canlink-mock/README.md
+  - `canlink-tscan-sys/README.md`
 
-  - canlink-cli/README.md
+  - `canlink-mock/README.md`
+
+  - `canlink-tscan/README.md`
+
+  - `canlink-cli/README.md`
 
 
 
@@ -191,19 +180,19 @@
 
   ### Added
 
-  - Initial release
+  - Initial public workspace release
 
-  - Hardware abstraction layer (canlink-hal)
+  - Hardware abstraction layer (`canlink-hal`)
 
-  - Mock backend for testing (canlink-mock)
+  - LibTSCAN FFI bindings (`canlink-tscan-sys`)
 
-  - Command-line interface (canlink-cli)
+  - Mock backend for testing (`canlink-mock`)
 
-  - Comprehensive test suite (140 tests)
+  - LibTSCAN backend (`canlink-tscan`)
 
-  - Performance benchmarks
+  - Command-line interface (`canlink-cli`)
 
-  - Complete documentation
+  - Complete documentation and release assets
 
 
 
@@ -387,11 +376,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Core Features
 
-- Hardware abstraction layer (canlink-hal) with unified backend interface
+- Hardware abstraction layer (`canlink-hal`) with unified backend interface
 
-- Mock backend (canlink-mock) for testing without hardware
+- LibTSCAN FFI bindings (`canlink-tscan-sys`) for vendor integration
 
-- Command-line interface (canlink-cli) for CAN operations
+- Mock backend (`canlink-mock`) for testing without hardware
+
+- LibTSCAN backend (`canlink-tscan`) for Windows CAN hardware access
+
+- Command-line interface (`canlink-cli`) for CAN operations
 
 - Backend registry and discovery system
 
@@ -605,45 +598,45 @@ git push origin v0.2.0
 
 ```bash
 
-# 1. Publish canlink-hal first (no dependencies)
+# 1. Publish canlink-hal first
 
 cd canlink-hal
 
-cargo publish --dry-run  # Test first
+cargo publish --dry-run --locked
 
-cargo publish
+cargo publish --locked
 
+# 2. Wait for crates.io indexing, then publish canlink-tscan-sys
 
+cd ../canlink-tscan-sys
 
-# Wait for crates.io to index (usually 1-2 minutes)
+cargo publish --dry-run --locked
 
-sleep 120
+cargo publish --locked
 
-
-
-# 2. Publish canlink-mock (depends on canlink-hal)
+# 3. Wait for indexing, then publish canlink-mock
 
 cd ../canlink-mock
 
-cargo publish --dry-run
+cargo publish --dry-run --locked
 
-cargo publish
+cargo publish --locked
 
+# 4. Wait for indexing, then publish canlink-tscan
 
+cd ../canlink-tscan
 
-# Wait for indexing
+cargo publish --dry-run --locked
 
-sleep 120
+cargo publish --locked
 
-
-
-# 3. Publish canlink-cli (depends on canlink-hal and canlink-mock)
+# 5. Wait for indexing, then publish canlink-cli
 
 cd ../canlink-cli
 
-cargo publish --dry-run
+cargo publish --dry-run --locked
 
-cargo publish
+cargo publish --locked
 
 ```
 
@@ -671,11 +664,13 @@ cargo login <your-api-token>
 
 open https://crates.io/crates/canlink-hal
 
+open https://crates.io/crates/canlink-tscan-sys
+
 open https://crates.io/crates/canlink-mock
 
+open https://crates.io/crates/canlink-tscan
+
 open https://crates.io/crates/canlink-cli
-
-
 
 # Test installation
 
@@ -934,9 +929,9 @@ git push origin v0.2.0
 # Publish to crates.io
 
 cd canlink-hal && cargo publish
-
+cd ../canlink-tscan-sys && cargo publish
 cd ../canlink-mock && cargo publish
-
+cd ../canlink-tscan && cargo publish
 cd ../canlink-cli && cargo publish
 
 ```
