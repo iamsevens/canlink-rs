@@ -43,10 +43,10 @@ setx PATH "%PATH%;C:\Program Files\TSMaster\bin"
 #### 方法 2: 复制 DLL 到项目目录
 ```cmd
 # 复制到 target/debug 目录
-copy "C:\Program Files\TSMaster\bin\libTSCAN.dll" d:\dev\canlink-rs\target\debug\
+copy "C:\Program Files\TSMaster\bin\libTSCAN.dll" .\target\debug\
 
 # 复制到 target/release 目录
-copy "C:\Program Files\TSMaster\bin\libTSCAN.dll" d:\dev\canlink-rs\target\release\
+copy "C:\Program Files\TSMaster\bin\libTSCAN.dll" .\target\release\
 ```
 
 #### 方法 3: 修改 build.rs 指定路径
@@ -82,7 +82,7 @@ lib /def:libTSCAN.def /out:libTSCAN.lib /machine:x64
 ### 2. 编译测试程序
 
 ```cmd
-cd d:\dev\canlink-rs\canlink-tscan-sys
+cd <repo-root>\canlink-tscan-sys
 cargo build --example basic_hardware_test
 ```
 

@@ -47,8 +47,8 @@
 //! ## Library Location
 //!
 //! The LibTSCAN.dll must be available in the system PATH or in the same directory
-//! as the executable. Typically, it's located at:
-//! `C:\Program Files\TSMaster\bin\libTSCAN.dll`
+//! as the executable. Typically, it is located in the TSMaster installation
+//! directory under `bin`, for example `TSMaster\\bin\\libTSCAN.dll`.
 
 #![cfg(windows)]
 #![allow(non_camel_case_types)]
