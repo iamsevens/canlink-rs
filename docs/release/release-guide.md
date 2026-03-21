@@ -13,6 +13,16 @@
   - Inputs: `version`, `confirm=publish`
   - Purpose: publishes `canlink-hal -> canlink-tscan-sys -> canlink-mock -> canlink-tscan -> canlink-cli` and waits for crates.io indexing after each step
 
+## Release Gate
+
+The workspace cannot be published as a single bulk action. Release must remain strictly serialized because later crates depend on earlier crates being available on crates.io.
+
+- Required order: `canlink-hal -> canlink-tscan-sys -> canlink-mock -> canlink-tscan -> canlink-cli`
+- Publish exactly one crate at a time
+- After each publish, wait until the target version is indexed on crates.io
+- Only then continue to the next crate
+- GitHub Actions and `scripts/release.bat` / `scripts/release.sh` already enforce this behavior; any manual release must follow the same rule
+
 ### Repository Setup Before Release
 
 - Configure `CARGO_REGISTRY_TOKEN` in GitHub repository secrets
@@ -592,7 +602,7 @@ git push origin v0.2.0
 
 
 
-**Important**: Publish in dependency order!
+**Important**: Publish in dependency order, and do not publish the next crate until the previous one is already indexed on crates.io.
 
 
 
@@ -618,7 +628,8 @@ cargo publish --locked
 
 cd ../canlink-mock
 
-cargo publish --dry-run --locked
+cargo publish --dry-run --locked \
+  --config "patch.crates-io.canlink-hal.path='canlink-hal'"
 
 cargo publish --locked
 
@@ -626,7 +637,9 @@ cargo publish --locked
 
 cd ../canlink-tscan
 
-cargo publish --dry-run --locked
+cargo publish --dry-run --locked \
+  --config "patch.crates-io.canlink-hal.path='canlink-hal'" \
+  --config "patch.crates-io.canlink-tscan-sys.path='canlink-tscan-sys'"
 
 cargo publish --locked
 
@@ -634,11 +647,17 @@ cargo publish --locked
 
 cd ../canlink-cli
 
-cargo publish --dry-run --locked
+cargo publish --dry-run --locked \
+  --config "patch.crates-io.canlink-hal.path='canlink-hal'" \
+  --config "patch.crates-io.canlink-mock.path='canlink-mock'" \
+  --config "patch.crates-io.canlink-tscan.path='canlink-tscan'" \
+  --config "patch.crates-io.canlink-tscan-sys.path='canlink-tscan-sys'"
 
 cargo publish --locked
 
 ```
+
+`patch.crates-io.*.path=...` is needed only for the dry-run phase before those internal dependencies are available on crates.io. The real publish commands remain `cargo publish --locked`.
 
 
 

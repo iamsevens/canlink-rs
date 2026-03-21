@@ -20,6 +20,17 @@ echo CANLink-RS Release Script
 echo ========================================
 echo Version: v%VERSION%
 echo.
+echo Publish gate:
+echo   1. canlink-hal
+echo   2. canlink-tscan-sys
+echo   3. canlink-mock
+echo   4. canlink-tscan
+echo   5. canlink-cli
+echo Rule:
+echo   publish one crate at a time
+echo   wait for crates.io indexing before the next crate
+echo   do not batch all cargo publish commands
+echo.
 
 echo Step 1: running pre-release checks...
 echo.
@@ -92,6 +103,9 @@ echo.
 
 set /p PUBLISH=Publish to crates.io? (y/n): 
 if /I "%PUBLISH%"=="y" (
+    echo Publishing will follow the required serialized order.
+    echo Each crate must be indexed before the next crate starts.
+    echo.
     call :publish_crate canlink-hal %VERSION%
     if %ERRORLEVEL% NEQ 0 exit /b 1
 
@@ -110,12 +124,13 @@ if /I "%PUBLISH%"=="y" (
     echo crates.io publish completed.
 ) else (
     echo Skipped crates.io publish.
-    echo Recommended manual order:
+    echo Required manual order:
     echo   canlink-hal
     echo   canlink-tscan-sys
     echo   canlink-mock
     echo   canlink-tscan
     echo   canlink-cli
+    echo Wait for indexing after each crate before continuing.
 )
 echo.
 
