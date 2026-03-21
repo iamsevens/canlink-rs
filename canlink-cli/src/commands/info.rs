@@ -65,8 +65,6 @@ pub fn execute(backend_name: &str, formatter: &OutputFormatter) -> CliResult<()>
 #[cfg(test)]
 mod tests {
     use super::*;
-    use canlink_mock::MockBackendFactory;
-    use std::sync::Arc;
 
     #[test]
     fn test_info_nonexistent_backend() {
@@ -75,17 +73,5 @@ mod tests {
         let result = execute("nonexistent", &formatter);
         assert!(result.is_err());
         assert!(matches!(result.unwrap_err(), CliError::BackendNotFound(_)));
-    }
-
-    #[test]
-    fn test_info_existing_backend() {
-        let registry = BackendRegistry::global();
-        let factory = Arc::new(MockBackendFactory::new());
-        // Ignore error if already registered
-        let _ = registry.register(factory);
-
-        let formatter = OutputFormatter::new(true);
-        let result = execute("mock", &formatter);
-        assert!(result.is_ok());
     }
 }

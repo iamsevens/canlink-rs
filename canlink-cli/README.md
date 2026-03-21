@@ -1,15 +1,15 @@
 # CANLink CLI
 
-A powerful command-line interface for interacting with CAN bus hardware through the CANLink Hardware Abstraction Layer.
+Command-line interface for interacting with CAN hardware through the CANLink HAL.
 
 ## Features
 
-- 🚀 **Backend Management**: List, query, and switch between different CAN hardware backends
-- 📤 **Send Messages**: Send standard, extended, CAN-FD, and remote frames
-- 📥 **Receive Messages**: Receive and display CAN messages with filtering
-- ✅ **Configuration Validation**: Validate configuration files before use
-- 🎨 **Multiple Output Formats**: Human-readable and JSON output
-- 🔧 **Flexible Configuration**: Command-line arguments, environment variables, and config files
+- List available backends
+- Query backend capabilities
+- Send CAN messages (single-shot or periodic)
+- Receive CAN messages
+- Validate configuration files
+- Human-readable and JSON output
 
 ## Installation
 
@@ -25,34 +25,35 @@ cargo install --path canlink-cli
 cargo install canlink-cli
 ```
 
-## Usage
+## Requirements
 
-### Quick Start
+Real hardware usage requires:
+
+- Windows
+- LibTSCAN runtime (TSMaster installation or a standalone LibTSCAN bundle)
+
+## Quick Start
 
 ```bash
 # List available backends
 canlink list
 
 # Query backend capabilities
-canlink info mock
+canlink info tscan
 
 # Send a CAN message
-canlink send mock 0 0x123 01 02 03 04
+canlink send tscan 0 0x123 01 02 03 04
 
 # Receive messages
-canlink receive mock 0 --count 5
+canlink receive tscan 0 --count 5
 ```
+
+## Commands
 
 ### List Available Backends
 
 ```bash
 canlink list
-```
-
-Output:
-```
-Available backends:
-  - mock
 ```
 
 ### Query Backend Information
@@ -62,19 +63,9 @@ canlink info <backend>
 ```
 
 Example:
-```bash
-canlink info mock
-```
 
-Output:
-```
-Backend: mock
-Version: 0.1.0
-Channels: 2
-CAN-FD Support: Yes
-Max Bitrate: 8000000 bps
-Supported Bitrates: [125000, 250000, 500000, 1000000]
-Filter Count: 16
+```bash
+canlink info tscan
 ```
 
 ### Send a CAN Message
@@ -83,25 +74,16 @@ Filter Count: 16
 canlink send <backend> <channel> <id> [data...]
 ```
 
-Example:
-```bash
-canlink send mock 0 0x123 01 02 03 04
-```
+Periodic mode:
 
-Output:
-```
-✓ Message sent: ID=0x123, Data=[01 02 03 04], Channel=0
+```bash
+canlink send tscan 0 0x123 01 02 03 04 --periodic 100 --count 10
 ```
 
 ### Receive CAN Messages
 
 ```bash
 canlink receive <backend> <channel> [--count <n>]
-```
-
-Example:
-```bash
-canlink receive mock 0 --count 5
 ```
 
 ### Validate Configuration File
@@ -111,14 +93,9 @@ canlink validate <config-file>
 ```
 
 Example:
+
 ```bash
 canlink validate canlink.toml
-```
-
-Output:
-```
-✓ Configuration file is valid: canlink.toml
-  Backend: mock
 ```
 
 ## JSON Output
@@ -126,20 +103,7 @@ Output:
 All commands support JSON output with the `--json` flag:
 
 ```bash
-canlink --json info mock
-```
-
-Output:
-```json
-{
-  "name": "mock",
-  "version": "0.1.0",
-  "channel_count": 2,
-  "supports_canfd": true,
-  "max_bitrate": 8000000,
-  "supported_bitrates": [125000, 250000, 500000, 1000000],
-  "filter_count": 16
-}
+canlink --json info tscan
 ```
 
 ## Configuration File Format
@@ -148,7 +112,7 @@ Create a `canlink.toml` file:
 
 ```toml
 [backend]
-backend_name = "mock"
+backend_name = "tscan"
 retry_count = 3
 retry_interval_ms = 1000
 ```
@@ -164,95 +128,6 @@ retry_interval_ms = 1000
 - `7`: Parse error
 - `8`: Timeout
 - `9`: No messages received
-
-## Examples
-
-### Basic Usage
-
-```bash
-# List backends
-canlink list
-
-# Get backend info
-canlink info mock
-
-# Send a message
-canlink send mock 0 0x123 AA BB CC
-
-# Receive messages
-canlink receive mock 0 --count 10
-```
-
-### Advanced Usage
-
-```bash
-# Send CAN-FD message (if supported)
-canlink send mock 0 0x200 01 02 03 04 05 06 07 08 09 0A 0B 0C
-
-# Send extended ID message
-canlink send mock 0 0x18FEF100 01 02 03 04
-
-# Receive with timeout
-canlink receive mock 0 --count 1 --timeout 1000
-
-# Filter by ID
-canlink receive mock 0 --filter 0x123
-```
-
-### OBD-II Communication
-
-```bash
-# Request engine RPM (PID 0x0C)
-canlink send mock 0 0x7DF 02 01 0C
-
-# Receive response
-canlink receive mock 0 --count 1 --filter 0x7E8
-```
-
-### Batch Operations
-
-```bash
-# Send multiple messages
-for i in {1..10}; do
-    canlink send mock 0 0x$i 0$i 0$i 0$i
-done
-
-# Monitor and log to file
-canlink receive mock 0 --count 100 > can_log.txt
-```
-
-### JSON Mode
-
-```bash
-# Get backend info as JSON
-canlink --json info mock | jq .
-
-# List backends as JSON
-canlink --json list
-```
-
-## Development
-
-### Building from Source
-
-```bash
-git clone https://github.com/iamsevens/canlink-rs.git
-cd canlink-rs
-cargo build --release -p canlink-cli
-```
-
-### Running Tests
-
-```bash
-cargo test -p canlink-cli
-```
-
-### Running Examples
-
-```bash
-# See examples/cli_usage.sh for comprehensive examples
-bash examples/cli_usage.sh
-```
 
 ## Troubleshooting
 
@@ -272,20 +147,16 @@ Error: Invalid hex byte: 'GG'
 
 **Solution**: Use valid hex bytes (00-FF)
 
-### Permission Denied
+### Missing LibTSCAN Runtime
 
-**Solution**: Ensure you have appropriate permissions to access CAN hardware
+If `tscan` initialization fails, ensure the LibTSCAN runtime is available and matches the installed DLL/Lib bundle.
 
 ## Related Documentation
 
 - [CANLink HAL Documentation](../canlink-hal/README.md)
-- [Mock Backend Guide](../canlink-mock/README.md)
+- [TSMaster Backend Guide](../canlink-tscan/README.md)
 - [Examples](../examples/)
 - [API Documentation](https://docs.rs/canlink-cli)
-
-## Contributing
-
-Contributions are welcome! Please see [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines.
 
 ## License
 

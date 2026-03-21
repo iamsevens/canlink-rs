@@ -79,8 +79,8 @@ mod tests {
 
     #[test]
     fn test_error_display() {
-        let err = CliError::BackendNotFound("mock".to_string());
-        assert_eq!(err.to_string(), "Backend not found: mock");
+        let err = CliError::BackendNotFound("tscan".to_string());
+        assert_eq!(err.to_string(), "Backend not found: tscan");
 
         let err = CliError::InvalidArgument("bad value".to_string());
         assert_eq!(err.to_string(), "Invalid argument: bad value");

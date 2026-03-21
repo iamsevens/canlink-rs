@@ -15,8 +15,7 @@ name = "canlink"
 path = "src/main.rs"
 
 [dependencies]
-canlink-hal = { version = "0.2.0", path = "../canlink-hal", features = ["periodic", "isotp"] }
-canlink-mock = { version = "0.2.0", path = "../canlink-mock", features = ["async-tokio"] }
+canlink-hal = { version = "0.2.0", path = "../canlink-hal", features = ["periodic"] }
 canlink-tscan = { version = "0.2.0", path = "../canlink-tscan" }
 clap = { workspace = true }
 serde = { workspace = true }
@@ -31,6 +30,3 @@ tempfile = "3.8"
 criterion = { workspace = true }
 toml = { workspace = true }
 
-[[bench]]
-name = "cli_bench"
-harness = false

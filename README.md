@@ -206,10 +206,13 @@ fn main() {
 cargo install --path canlink-cli
 
 canlink list
-canlink info mock
 canlink info tscan
-canlink send mock 0 0x123 01 02 03 04
+canlink send tscan 0 0x123 01 02 03 04
+canlink receive tscan 0 --count 1
 ```
+
+> 真实硬件模式需要 Windows 与 LibTSCAN 运行库。
+
 
 ## 文档
 

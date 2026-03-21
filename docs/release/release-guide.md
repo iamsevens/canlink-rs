@@ -7,17 +7,17 @@
   - Purpose: runs `fmt + clippy + build + test + doc test + doc` as the main branch quality gate
 - `Release Dry Run`: `.github/workflows/release-dryrun.yml`
   - Trigger: `workflow_dispatch`
-  - Purpose: runs `cargo publish --dry-run` for all 5 crates and applies `patch.crates-io` for unpublished internal dependencies
+- Purpose: runs `cargo publish --dry-run` for all 4 crates and applies `patch.crates-io` for unpublished internal dependencies
 - `Release Publish`: `.github/workflows/release-publish.yml`
   - Trigger: `workflow_dispatch`
   - Inputs: `version`, `confirm=publish`
-  - Purpose: publishes `canlink-hal -> canlink-tscan-sys -> canlink-mock -> canlink-tscan -> canlink-cli` and waits for crates.io indexing after each step
+  - Purpose: publishes `canlink-hal -> canlink-tscan-sys -> canlink-tscan -> canlink-cli` and waits for crates.io indexing after each step
 
 ## Release Gate
 
 The workspace cannot be published as a single bulk action. Release must remain strictly serialized because later crates depend on earlier crates being available on crates.io.
 
-- Required order: `canlink-hal -> canlink-tscan-sys -> canlink-mock -> canlink-tscan -> canlink-cli`
+- Required order: `canlink-hal -> canlink-tscan-sys -> canlink-tscan -> canlink-cli`
 - Publish exactly one crate at a time
 - After each publish, wait until the target version is indexed on crates.io
 - Only then continue to the next crate
@@ -170,8 +170,6 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
 
   - `canlink-tscan-sys/README.md`
 
-  - `canlink-mock/README.md`
-
   - `canlink-tscan/README.md`
 
   - `canlink-cli/README.md`
@@ -197,8 +195,6 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
   - Hardware abstraction layer (`canlink-hal`)
 
   - LibTSCAN FFI bindings (`canlink-tscan-sys`)
-
-  - Mock backend for testing (`canlink-mock`)
 
   - LibTSCAN backend (`canlink-tscan`)
 
@@ -286,9 +282,10 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
 
   cargo run -p canlink-cli -- list
 
-  cargo run -p canlink-cli -- info mock
+  cargo run -p canlink-cli -- info tscan
 
-  cargo run -p canlink-cli -- send mock 0 0x123 01 02 03
+  # Requires LibTSCAN runtime and connected hardware
+  cargo run -p canlink-cli -- send tscan 0 0x123 01 02 03
 
   ```
 
@@ -387,8 +384,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hardware abstraction layer (`canlink-hal`) with unified backend interface
 
 - LibTSCAN FFI bindings (`canlink-tscan-sys`) for vendor integration
-
-- Mock backend (`canlink-mock`) for testing without hardware
 
 - LibTSCAN backend (`canlink-tscan`) for Windows CAN hardware access
 
@@ -501,7 +496,7 @@ git push origin main
 3. Confirm `CHANGELOG.md`, version metadata, and README content one last time
 
 4. Confirm the publish order:
-   `canlink-hal -> canlink-tscan-sys -> canlink-mock -> canlink-tscan -> canlink-cli`
+   `canlink-hal -> canlink-tscan-sys -> canlink-tscan -> canlink-cli`
 
 5. Confirm whether the repository should be public before or after crates.io publish
 
@@ -611,16 +606,7 @@ cargo publish --dry-run --locked
 
 cargo publish --locked
 
-# 3. Wait for indexing, then publish canlink-mock
-
-cd ../canlink-mock
-
-cargo publish --dry-run --locked \
-  --config "patch.crates-io.canlink-hal.path='canlink-hal'"
-
-cargo publish --locked
-
-# 4. Wait for indexing, then publish canlink-tscan
+# 3. Wait for indexing, then publish canlink-tscan
 
 cd ../canlink-tscan
 
@@ -630,13 +616,12 @@ cargo publish --dry-run --locked \
 
 cargo publish --locked
 
-# 5. Wait for indexing, then publish canlink-cli
+# 4. Wait for indexing, then publish canlink-cli
 
 cd ../canlink-cli
 
 cargo publish --dry-run --locked \
   --config "patch.crates-io.canlink-hal.path='canlink-hal'" \
-  --config "patch.crates-io.canlink-mock.path='canlink-mock'" \
   --config "patch.crates-io.canlink-tscan.path='canlink-tscan'" \
   --config "patch.crates-io.canlink-tscan-sys.path='canlink-tscan-sys'"
 
@@ -671,8 +656,6 @@ cargo login <your-api-token>
 open https://crates.io/crates/canlink-hal
 
 open https://crates.io/crates/canlink-tscan-sys
-
-open https://crates.io/crates/canlink-mock
 
 open https://crates.io/crates/canlink-tscan
 

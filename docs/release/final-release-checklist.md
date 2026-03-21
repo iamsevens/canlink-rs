@@ -17,9 +17,8 @@ The workspace must be published in this exact order:
 
 1. `canlink-hal`
 2. `canlink-tscan-sys`
-3. `canlink-mock`
-4. `canlink-tscan`
-5. `canlink-cli`
+3. `canlink-tscan`
+4. `canlink-cli`
 
 Mandatory rules:
 
@@ -51,7 +50,7 @@ Fill these in before starting:
 - [ ] Workspace version in `Cargo.toml` is updated to the target version
 - [ ] `CHANGELOG.md` contains the target version entry
 - [ ] Release notes are ready
-- [ ] The publish order is confirmed again: `canlink-hal -> canlink-tscan-sys -> canlink-mock -> canlink-tscan -> canlink-cli`
+- [ ] The publish order is confirmed again: `canlink-hal -> canlink-tscan-sys -> canlink-tscan -> canlink-cli`
 
 ## Token And GitHub Setup
 
@@ -67,7 +66,7 @@ Fill these in before starting:
 - [ ] `scripts/check.bat` or `./scripts/check.sh` passes
 - [ ] `cargo doc --no-deps --all-features --workspace` passes
 - [ ] `python scripts/check_doc_coverage.py` reports 100.0% documented coverage for all publishable crates
-- [ ] Release dry-run passes for all 5 crates
+- [ ] Release dry-run passes for all 4 crates
 - [ ] Dry-run verification uses the required `patch.crates-io.*.path=...` overrides for unpublished internal crates
 
 ## Publish Execution
@@ -84,8 +83,6 @@ Per-crate execution:
 - [ ] Wait until `canlink-hal = "<version>"` is indexed
 - [ ] Publish `canlink-tscan-sys`
 - [ ] Wait until `canlink-tscan-sys = "<version>"` is indexed
-- [ ] Publish `canlink-mock`
-- [ ] Wait until `canlink-mock = "<version>"` is indexed
 - [ ] Publish `canlink-tscan`
 - [ ] Wait until `canlink-tscan = "<version>"` is indexed
 - [ ] Publish `canlink-cli`
@@ -95,7 +92,6 @@ Per-crate execution:
 
 - [ ] crates.io page opens for `canlink-hal`
 - [ ] crates.io page opens for `canlink-tscan-sys`
-- [ ] crates.io page opens for `canlink-mock`
 - [ ] crates.io page opens for `canlink-tscan`
 - [ ] crates.io page opens for `canlink-cli`
 - [ ] `cargo install canlink-cli` succeeds in a clean environment

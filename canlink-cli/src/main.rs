@@ -6,11 +6,8 @@
 //! - Listing available backends
 //! - Querying backend capabilities
 //! - Sending and receiving CAN messages
-//! - Periodic message sending
-//! - ISO-TP transport protocol support
+//! - Periodic message sending (send --periodic)
 //! - Validating configuration files
-//! - Managing message filters
-//! - Monitoring connection status
 
 #![deny(missing_docs)]
 
@@ -19,7 +16,6 @@ mod error;
 mod output;
 
 use clap::{Parser, Subcommand};
-use commands::filter::FilterType;
 use output::OutputFormatter;
 
 /// Top-level CLI arguments.
@@ -90,160 +86,6 @@ enum Commands {
         /// Path to configuration file
         config: String,
     },
-
-    /// Manage message filters
-    #[command(subcommand)]
-    Filter(FilterCommands),
-
-    /// Monitor connection status
-    #[command(subcommand)]
-    Monitor(MonitorCommands),
-
-    /// ISO-TP transport protocol commands
-    #[command(subcommand)]
-    Isotp(IsoTpCommands),
-}
-
-/// Filter subcommands
-#[derive(Subcommand)]
-enum FilterCommands {
-    /// Add a new filter
-    Add {
-        /// Filter type: id, mask, or range
-        #[arg(value_parser = parse_filter_type)]
-        filter_type: FilterType,
-
-        /// Filter parameters (depends on type)
-        /// - id: `<id>`
-        /// - mask: `<id> <mask>`
-        /// - range: `<start> <end>`
-        params: Vec<String>,
-
-        /// Use extended (29-bit) CAN IDs
-        #[arg(short, long)]
-        extended: bool,
-    },
-
-    /// List all configured filters
-    List,
-
-    /// Remove a filter by index
-    Remove {
-        /// Filter index to remove
-        index: usize,
-    },
-
-    /// Clear all filters
-    Clear,
-}
-
-/// Monitor subcommands
-#[derive(Subcommand)]
-enum MonitorCommands {
-    /// Display connection status
-    Status,
-
-    /// Attempt to reconnect to a backend
-    Reconnect {
-        /// Backend name to reconnect
-        backend: String,
-    },
-
-    /// Configure monitor settings
-    Config {
-        /// Heartbeat interval in milliseconds
-        #[arg(long)]
-        heartbeat_ms: Option<u64>,
-
-        /// Enable auto-reconnect
-        #[arg(long)]
-        auto_reconnect: bool,
-
-        /// Maximum reconnect retries (requires --auto-reconnect)
-        #[arg(long)]
-        max_retries: Option<u32>,
-    },
-}
-
-/// ISO-TP subcommands
-#[derive(Subcommand)]
-enum IsoTpCommands {
-    /// Send an ISO-TP message
-    Send {
-        /// Backend name
-        backend: String,
-
-        /// Channel number
-        #[arg(short, long, default_value = "0")]
-        channel: u32,
-
-        /// Transmit CAN ID (hex)
-        #[arg(long, value_parser = parse_can_id)]
-        tx_id: u32,
-
-        /// Receive CAN ID (hex)
-        #[arg(long, value_parser = parse_can_id)]
-        rx_id: u32,
-
-        /// Data bytes (hex, space-separated)
-        data: Vec<String>,
-
-        /// Timeout in milliseconds
-        #[arg(short, long, default_value = "1000")]
-        timeout: u64,
-    },
-
-    /// Receive an ISO-TP message
-    Receive {
-        /// Backend name
-        backend: String,
-
-        /// Channel number
-        #[arg(short, long, default_value = "0")]
-        channel: u32,
-
-        /// Transmit CAN ID for Flow Control (hex)
-        #[arg(long, value_parser = parse_can_id)]
-        tx_id: u32,
-
-        /// Receive CAN ID to listen for (hex)
-        #[arg(long, value_parser = parse_can_id)]
-        rx_id: u32,
-
-        /// Timeout in milliseconds
-        #[arg(short, long, default_value = "5000")]
-        timeout: u64,
-    },
-
-    /// Send request and receive response (exchange)
-    Exchange {
-        /// Backend name
-        backend: String,
-
-        /// Channel number
-        #[arg(short, long, default_value = "0")]
-        channel: u32,
-
-        /// Transmit CAN ID (hex)
-        #[arg(long, value_parser = parse_can_id)]
-        tx_id: u32,
-
-        /// Receive CAN ID (hex)
-        #[arg(long, value_parser = parse_can_id)]
-        rx_id: u32,
-
-        /// Request data bytes (hex, space-separated)
-        data: Vec<String>,
-
-        /// Timeout in milliseconds
-        #[arg(short, long, default_value = "1000")]
-        timeout: u64,
-    },
-}
-
-/// Parses filter type name used by `filter add`.
-fn parse_filter_type(s: &str) -> Result<FilterType, String> {
-    s.parse()
 }
 
 /// Parses a CAN ID from hex string (`0x123` or `123`).
@@ -256,17 +98,10 @@ fn parse_can_id(s: &str) -> Result<u32, String> {
 fn main() {
     // Register available backends
     use canlink_hal::BackendRegistry;
-    use canlink_mock::MockBackendFactory;
     use canlink_tscan::TSCanBackendFactory;
     use std::sync::Arc;
 
     let registry = BackendRegistry::global();
-
-    // Register mock backend
-    let mock_factory = Arc::new(MockBackendFactory::new());
-    if let Err(e) = registry.register(mock_factory) {
-        eprintln!("Warning: Failed to register mock backend: {}", e);
-    }
 
     // Register TSCan backend
     let tscan_factory = Arc::new(TSCanBackendFactory::new());
@@ -306,63 +141,6 @@ fn main() {
             count,
         } => commands::receive::execute(&backend, channel, count, &formatter),
         Commands::Validate { config } => commands::validate::execute(&config, &formatter),
-        Commands::Filter(filter_cmd) => match filter_cmd {
-            FilterCommands::Add {
-                filter_type,
-                params,
-                extended,
-            } => commands::filter::execute_add(filter_type, &params, extended, &formatter),
-            FilterCommands::List => commands::filter::execute_list(&formatter),
-            FilterCommands::Remove { index } => commands::filter::execute_remove(index, &formatter),
-            FilterCommands::Clear => commands::filter::execute_clear(&formatter),
-        },
-        Commands::Monitor(monitor_cmd) => match monitor_cmd {
-            MonitorCommands::Status => commands::monitor::execute_status(&formatter),
-            MonitorCommands::Reconnect { backend } => {
-                commands::monitor::execute_reconnect(&backend, &formatter)
-            }
-            MonitorCommands::Config {
-                heartbeat_ms,
-                auto_reconnect,
-                max_retries,
-            } => commands::monitor::configure_monitor(
-                heartbeat_ms,
-                auto_reconnect,
-                max_retries,
-                &formatter,
-            ),
-        },
-        Commands::Isotp(isotp_cmd) => match isotp_cmd {
-            IsoTpCommands::Send {
-                backend,
-                channel,
-                tx_id,
-                rx_id,
-                data,
-                timeout,
-            } => commands::isotp::execute_send(
-                &backend, channel, tx_id, rx_id, &data, timeout, &formatter,
-            ),
-            IsoTpCommands::Receive {
-                backend,
-                channel,
-                tx_id,
-                rx_id,
-                timeout,
-            } => commands::isotp::execute_receive(
-                &backend, channel, tx_id, rx_id, timeout, &formatter,
-            ),
-            IsoTpCommands::Exchange {
-                backend,
-                channel,
-                tx_id,
-                rx_id,
-                data,
-                timeout,
-            } => commands::isotp::execute_exchange(
-                &backend, channel, tx_id, rx_id, &data, timeout, &formatter,
-            ),
-        },
     };
 
     match result {

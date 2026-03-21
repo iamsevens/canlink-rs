@@ -6,6 +6,7 @@ rust-version.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
+publish = false
 description = "Mock backend for CAN hardware abstraction layer testing"
 keywords = ["can", "canfd", "mock", "testing"]
 categories = ["development-tools::testing", "embedded"]

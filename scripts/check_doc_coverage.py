@@ -52,22 +52,6 @@ TARGETS = [
         ],
     ),
     CoverageTarget(
-        name="canlink-mock",
-        command=[
-            "cargo",
-            "+nightly",
-            "rustdoc",
-            "-p",
-            "canlink-mock",
-            "--lib",
-            "--all-features",
-            "--",
-            "-Z",
-            "unstable-options",
-            "--show-coverage",
-        ],
-    ),
-    CoverageTarget(
         name="canlink-tscan",
         command=[
             "cargo",

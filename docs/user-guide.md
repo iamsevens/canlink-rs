@@ -912,15 +912,7 @@ fn print_stats(stats: &PeriodicStats) {
 
 ### CLI 支持
 
-使用 CLI 工具发送周期消息：
-
-```bash
-# 每 100ms 发送一次，共发送 10 次
-canlink send --backend mock --id 0x123 --data 01 02 03 04 --periodic 100 --count 10
-
-# 无限发送（按 Ctrl+C 停止，最多 1000 次安全限制）
-canlink send --backend mock --id 0x123 --data AA BB CC --periodic 50
-```
+当前正式 CLI 不再提供 ISO-TP 子命令。ISO-TP 仅作为库能力保留，如需命令行操作请自行构建专用工具或使用示例代码。
 
 ## ISO-TP 传输协议
 
@@ -1146,18 +1138,7 @@ async fn handle_isotp_errors(
 
 ### CLI 支持
 
-使用 CLI 工具进行 ISO-TP 通信：
-
-```bash
-# 发送 ISO-TP 消息
-canlink isotp send --backend mock --tx-id 0x7E0 --rx-id 0x7E8 --data 10 01
-
-# 接收 ISO-TP 消息
-canlink isotp receive --backend mock --tx-id 0x7E0 --rx-id 0x7E8 --timeout 5000
-
-# 发送请求并接收响应
-canlink isotp exchange --backend mock --tx-id 0x7E0 --rx-id 0x7E8 --data 19 02 FF
-```
+当前正式 CLI 不再提供 ISO-TP 子命令。ISO-TP 仅作为库能力保留，如需命令行操作请自行构建专用工具或使用示例代码。
 
 ## 高级特性
 
