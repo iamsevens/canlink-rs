@@ -30,7 +30,7 @@ fn test_cli_list_json() {
 
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains(""backends""));
+        .stdout(predicate::str::contains("\"backends\""));
 }
 
 /// Test the info command with non-existent backend.
@@ -49,9 +49,13 @@ fn test_cli_info_nonexistent() {
 #[test]
 fn test_cli_validate_valid() {
     let temp_file = NamedTempFile::new().unwrap();
-    fs::write(temp_file.path(), "[backend]
+    fs::write(
+        temp_file.path(),
+        r#"[backend]
 backend_name = "tscan"
-").unwrap();
+"#,
+    )
+    .unwrap();
 
     let mut cmd = canlink();
     cmd.arg("validate").arg(temp_file.path());
@@ -161,5 +165,7 @@ fn test_cli_global_json_flag() {
     let mut cmd = canlink();
     cmd.arg("--json").arg("list");
 
-    cmd.assert().success().stdout(predicate::str::contains(""backends""));
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("\"backends\""));
 }

@@ -1,3 +1,4 @@
+#![cfg(feature = "isotp")]
 //! Integration tests for ISO-TP protocol.
 //!
 //! Tests cover:

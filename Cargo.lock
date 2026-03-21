@@ -261,7 +261,6 @@ version = "0.2.0"
 dependencies = [
  "assert_cmd",
  "canlink-hal",
- "canlink-mock",
  "canlink-tscan",
  "clap",
  "criterion",
