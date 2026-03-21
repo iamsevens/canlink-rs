@@ -22,17 +22,17 @@ fn main() {
     // Only build on Windows
     #[cfg(windows)]
     {
-        let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
-        let workspace_root = PathBuf::from(&manifest_dir).parent().unwrap().to_path_buf();
+        let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+        let workspace_root = manifest_dir.parent().unwrap().to_path_buf();
         let profile = env::var("PROFILE").unwrap_or_else(|_| "debug".to_string());
 
         let selected_bundle = bundle::select_bundle_dir(&bundle_candidates(&workspace_root))
-            .or_else(fallback_with_allow_missing_bundle);
+            .or_else(|| fallback_with_allow_missing_bundle(&manifest_dir));
 
         let Some(selected_bundle) = selected_bundle else {
             let help = format!(
                 "No usable LibTSCAN bundle found (need both libTSCAN.lib and libTSCAN.dll). \
-Set {BUNDLE_ENV} to the bundle directory or set {ALLOW_MISSING_BUNDLE_ENV}=1 for publish dry-run."
+Set {BUNDLE_ENV} to the bundle directory."
             );
             panic!("{help}");
         };
@@ -116,7 +116,7 @@ fn bundle_candidates(workspace_root: &Path) -> Vec<PathBuf> {
 }
 
 #[cfg(windows)]
-fn fallback_with_allow_missing_bundle() -> Option<PathBuf> {
+fn fallback_with_allow_missing_bundle(manifest_dir: &Path) -> Option<PathBuf> {
     if allow_missing_bundle() {
         println!(
             "cargo:warning=No LibTSCAN bundle found. {}=1 is set, skip linking/runtime bundle copy for this build.",
@@ -124,6 +124,14 @@ fn fallback_with_allow_missing_bundle() -> Option<PathBuf> {
         );
         return Some(PathBuf::new());
     }
+
+    if is_packaged_verification_build(manifest_dir) {
+        println!(
+            "cargo:warning=No LibTSCAN bundle found. Detected cargo package/publish verification build, skip linking/runtime bundle copy."
+        );
+        return Some(PathBuf::new());
+    }
+
     None
 }
 
@@ -136,6 +144,12 @@ fn allow_missing_bundle() -> bool {
             .as_str(),
         "1" | "true" | "yes"
     )
+}
+
+#[cfg(windows)]
+fn is_packaged_verification_build(manifest_dir: &Path) -> bool {
+    let normalized = manifest_dir.to_string_lossy().replace('\\', "/");
+    normalized.contains("/target/package/")
 }
 
 #[cfg(windows)]
