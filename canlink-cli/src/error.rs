@@ -15,9 +15,6 @@ pub enum CliError {
     #[error("Backend error: {0}")]
     BackendError(#[from] canlink_hal::CanError),
 
-    /// Generic operation error (string-based).
-    #[error("{0}")]
-    OperationError(String),
 
     /// Configuration error.
     #[error("Configuration error: {0}")]
@@ -50,7 +47,6 @@ impl CliError {
         match self {
             CliError::BackendNotFound(_) => 2,
             CliError::BackendError(_) => 3,
-            CliError::OperationError(_) => 3,
             CliError::ConfigError(_) => 4,
             CliError::InvalidArgument(_) => 5,
             CliError::IoError(_) => 6,

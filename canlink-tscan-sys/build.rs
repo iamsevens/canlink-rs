@@ -12,6 +12,23 @@ use std::path::PathBuf;
 const BUNDLE_ENV: &str = "CANLINK_TSCAN_BUNDLE_DIR";
 const TSMASTER_HOME_ENV: &str = "TSMASTER_HOME";
 const ALLOW_MISSING_BUNDLE_ENV: &str = "CANLINK_TSCAN_ALLOW_MISSING_BUNDLE";
+const VERBOSE_ENV: &str = "CANLINK_TSCAN_SYS_VERBOSE";
+
+fn is_verbose() -> bool {
+    match env::var(VERBOSE_ENV) {
+        Ok(value) => {
+            let value = value.trim().to_ascii_lowercase();
+            !(value.is_empty() || value == "0" || value == "false" || value == "no")
+        }
+        Err(_) => false,
+    }
+}
+
+fn emit_info(message: &str) {
+    if is_verbose() {
+        println!("cargo:warning={message}");
+    }
+}
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
@@ -43,10 +60,10 @@ Set {BUNDLE_ENV} to the bundle directory."
 Set {BUNDLE_ENV} for full linking."
             );
         } else {
-            println!(
-                "cargo:warning=Using LibTSCAN bundle: {}",
+            emit_info(&format!(
+                "Using LibTSCAN bundle: {}",
                 selected_bundle.display()
-            );
+            ));
 
             // Link import library from the selected bundle.
             println!(
@@ -201,7 +218,7 @@ fn copy_runtime_bundle(from_dir: &Path, to_dir: &Path) {
                 err
             );
         } else {
-            println!("cargo:warning=Copied runtime DLL to: {}", target.display());
+            emit_info(&format!("Copied runtime DLL to: {}", target.display()));
         }
     }
 }
