@@ -34,6 +34,7 @@ Run `Release Dry Run` first, then `Release Publish`.
 
 - `Release Dry Run`: runs `cargo publish --dry-run` for all crates
 - `Release Publish`: publishes crates to crates.io in dependency order and waits for indexing
+- Both workflows run the vendor bundle guard and will fail if LibTSCAN binaries are detected
 
 This is the safest path for a first public release because the workflow already applies the required `patch.crates-io` overrides for unpublished internal dependencies.
 
@@ -62,6 +63,7 @@ The scripts will:
 
 - run tests and quality checks
 - build documentation
+- run the vendor bundle guard (`scripts/guard_vendor_bundle.py`)
 - prompt you to update the workspace version and `CHANGELOG.md`
 - create a commit and tag
 - optionally push to the remote
@@ -155,6 +157,7 @@ canlink --version
 - [ ] all tests pass
 - [ ] quality checks pass
 - [ ] documentation builds successfully
+- [ ] vendor bundle guard passes (`python scripts/guard_vendor_bundle.py`)
 - [ ] workspace version is updated
 - [ ] `CHANGELOG.md` is updated
 - [ ] examples still run

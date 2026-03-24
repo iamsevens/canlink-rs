@@ -55,6 +55,13 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
+echo Running vendor bundle guard...
+python scripts\guard_vendor_bundle.py
+if %ERRORLEVEL% NEQ 0 (
+    echo Error: vendor bundle guard failed
+    exit /b 1
+)
+
 echo Pre-release checks passed.
 echo.
 

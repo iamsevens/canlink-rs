@@ -36,6 +36,15 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
 - `canlink-tscan-sys` allows missing local vendor bundles during `cargo package` / `cargo publish --dry-run` verification builds
 - For local development or hardware debugging, set `CANLINK_TSCAN_BUNDLE_DIR` when you want to force a specific bundle path
 
+### Vendor Asset Boundary (Required)
+
+- Do **not** publish or bundle any vendor binaries (`libTSCAN.dll`, `libTSCAN.lib`, `libTSCAN.so`, `libTSCAN.dylib`).
+- Vendor raw materials under `docs/vendor/tsmaster/**` must remain local-only.
+- The release guard (`scripts/guard_vendor_bundle.py`) runs in:
+  - GitHub Actions release workflows
+  - Local release scripts (`scripts/release.bat` / `scripts/release.sh`)
+- If the guard fails, stop the release and remove the vendor files from tracked content or packaging inputs.
+
 
 
 **Project**: CANLink-RS - CAN Hardware Abstraction Layer

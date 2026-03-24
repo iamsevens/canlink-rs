@@ -20,6 +20,9 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Guard vendor bundles
+        run: python scripts/guard_vendor_bundle.py
+
       - name: Dry run canlink-hal
         run: cargo publish --dry-run -p canlink-hal --locked
 

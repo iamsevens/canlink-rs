@@ -66,6 +66,7 @@ Fill these in before starting:
 - [ ] `scripts/check.bat` or `./scripts/check.sh` passes
 - [ ] `cargo doc --no-deps --all-features --workspace` passes
 - [ ] `python scripts/check_doc_coverage.py` reports 100.0% documented coverage for all publishable crates
+- [ ] `python scripts/guard_vendor_bundle.py` passes (no LibTSCAN binaries in repo or packages)
 - [ ] Release dry-run passes for all 4 crates
 - [ ] Dry-run verification uses the required `patch.crates-io.*.path=...` overrides for unpublished internal crates
 

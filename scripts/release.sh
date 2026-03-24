@@ -72,6 +72,9 @@ echo "Running quality checks..."
 echo "Building documentation..."
 cargo doc --no-deps --all-features --workspace
 
+echo "Running vendor bundle guard..."
+python scripts/guard_vendor_bundle.py
+
 echo "Pre-release checks passed."
 echo
 
