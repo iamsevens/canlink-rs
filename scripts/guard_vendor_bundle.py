@@ -22,6 +22,18 @@ PUBLISH_CRATES = [
     "canlink-cli",
 ]
 
+PATCH_CONFIGS: dict[str, list[str]] = {
+    "canlink-tscan": [
+        "patch.crates-io.canlink-hal.path=\"canlink-hal\"",
+        "patch.crates-io.canlink-tscan-sys.path=\"canlink-tscan-sys\"",
+    ],
+    "canlink-cli": [
+        "patch.crates-io.canlink-hal.path=\"canlink-hal\"",
+        "patch.crates-io.canlink-tscan.path=\"canlink-tscan\"",
+        "patch.crates-io.canlink-tscan-sys.path=\"canlink-tscan-sys\"",
+    ],
+}
+
 
 def repo_root() -> Path:
     return Path(__file__).resolve().parents[1]
@@ -68,9 +80,11 @@ def ensure_package(root: Path, crate: str) -> Path:
     package_dir = root / "target" / "package"
     package_dir.mkdir(parents=True, exist_ok=True)
 
-    result = run(
-        ["cargo", "package", "-p", crate, "--allow-dirty", "--no-verify"], root
-    )
+    cmd = ["cargo", "package", "-p", crate, "--allow-dirty", "--no-verify"]
+    for patch in PATCH_CONFIGS.get(crate, []):
+        cmd.extend(["--config", patch])
+
+    result = run(cmd, root)
     if result.returncode != 0:
         raise RuntimeError(
             f"cargo package failed for {crate}:\n{result.stdout}"
