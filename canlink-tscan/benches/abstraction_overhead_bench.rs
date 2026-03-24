@@ -8,7 +8,7 @@
 //! As specified in spec.md SC-005:
 //! - CPU: Modern x86_64 processor (≥ 2.0 GHz, ≥ 4 cores)
 //! - Memory: ≥ 8 GB RAM
-//! - OS: Windows 10/11 or Linux (kernel ≥ 5.0)
+//! - OS: Windows 10/11 (x64, verified; Linux/macOS not verified)
 //! - Compilation: Release mode (`cargo bench`)
 //!
 //! ## Running Benchmarks

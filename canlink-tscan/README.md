@@ -62,8 +62,8 @@
 
 ```toml
 [dependencies]
-canlink-hal = "0.1"
-canlink-tscan = "0.1"
+canlink-hal = "0.3.0"
+canlink-tscan = "0.3.0"
 ```
 
 ### 2. 安装 LibTSCAN
@@ -71,8 +71,8 @@ canlink-tscan = "0.1"
 从 TSMaster 官网下载并安装 LibTSCAN（本项目不提供 LibTSCAN 文件，请按厂商许可自行获取）：
 
 1. 下载 TSMaster 软件包
-2. 将 `libTSCAN.dll` 复制到系统路径或应用程序目录
-3. 确保 DLL 版本与您的硬件兼容
+2. 准备 `libTSCAN.dll` 与 `libTSCAN.lib`（x64）
+3. 按 `docs/guides/libtscan-setup-guide.md` 配置运行库路径与环境变量
 
 ### 3. 连接硬件
 

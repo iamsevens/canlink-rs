@@ -1,4 +1,4 @@
-# Release Guide - CANLink-RS
+﻿# Release Guide - CANLink-RS
 
 ## GitHub Actions Release Flow
 
@@ -49,7 +49,7 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
 
 **Project**: CANLink-RS - CAN Hardware Abstraction Layer
 
-**Target Version**: v0.2.0
+**Target Version**: v0.3.0
 
 **Date**: 2026-01-09
 
@@ -156,7 +156,7 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
 
   ```toml
   [workspace.package]
-  version = "0.2.0"
+  version = "0.3.0"
   ```
 
 - [ ] **Update version in documentation**
@@ -193,7 +193,7 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
 
 
 
-  ## [0.2.0] - 2026-01-09
+  ## [0.3.0] - 2026-01-09
 
 
 
@@ -340,7 +340,7 @@ Edit the following files:
 
 [workspace.package]
 
-version = "0.2.0"
+version = "0.3.0"
 
 ```
 
@@ -380,7 +380,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-## [0.2.0] - 2026-01-09
+## [0.3.0] - 2026-01-09
 
 
 
@@ -482,7 +482,7 @@ git add -A
 
 # Commit with release message
 
-git commit -m "chore: prepare release v0.2.0"
+git commit -m "chore: prepare release v0.3.0"
 
 
 
@@ -529,11 +529,11 @@ git pull origin main
 
 # Create annotated tag
 
-git tag -a v0.2.0 -m "Release v0.2.0
+git tag -a v0.3.0 -m "Release v0.3.0
 
 
 
-CANLink-RS v0.2.0 - Release
+CANLink-RS v0.3.0 - Release
 
 
 
@@ -559,7 +559,7 @@ See CHANGELOG.md for details.
 
 # Push tag
 
-git push origin v0.2.0
+git push origin v0.3.0
 
 ```
 
@@ -573,9 +573,9 @@ git push origin v0.2.0
 
 2. Click "Draft a new release"
 
-3. Select tag: `v0.2.0`
+3. Select tag: `v0.3.0`
 
-4. Release title: `v0.2.0 - Release`
+4. Release title: `v0.3.0 - Release`
 
 5. Description: Copy from CHANGELOG.md
 
@@ -814,21 +814,21 @@ git push origin develop
 
 # Delete local tag
 
-git tag -d v0.2.0
+git tag -d v0.3.0
 
 
 
 # Delete remote tag
 
-git push origin :refs/tags/v0.2.0
+git push origin :refs/tags/v0.3.0
 
 
 
 # Recreate tag
 
-git tag -a v0.2.0 -m "Release v0.2.0"
+git tag -a v0.3.0 -m "Release v0.3.0"
 
-git push origin v0.2.0
+git push origin v0.3.0
 
 ```
 
@@ -900,7 +900,7 @@ git push origin v0.2.0
 
 # Full release workflow
 
-./scripts/release.sh v0.2.0
+./scripts/release.sh v0.3.0
 
 
 
@@ -911,13 +911,13 @@ git pull origin main
 
 # Update versions and CHANGELOG
 
-git commit -am "chore: prepare release v0.2.0"
+git commit -am "chore: prepare release v0.3.0"
 
 git push origin main
 
-git tag -a v0.2.0 -m "Release v0.2.0"
+git tag -a v0.3.0 -m "Release v0.3.0"
 
-git push origin v0.2.0
+git push origin v0.3.0
 
 # Publish to crates.io
 
@@ -954,4 +954,5 @@ git push origin v0.2.0
 
 **Last Updated**: 2026-01-09
 
-**Status**: Ready for v0.2.0 Release
+**Status**: Ready for v0.3.0 Release
+
