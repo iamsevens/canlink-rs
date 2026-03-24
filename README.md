@@ -13,7 +13,7 @@
 | 类型 | 当前状态 | 说明 |
 |---|---|---|
 | Mock 后端 | 已实现 | 无需硬件，用于开发、测试、CI、回归 |
-| LibTSCAN 后端（`canlink-tscan`） | 已实现 | 当前唯一已落地的真实硬件接入路径，运行于 Windows |
+| LibTSCAN 后端（`canlink-tscan`） | 已实现 | 当前唯一已落地的真实硬件接入路径，已在 Windows 环境验证（其他平台未验证） |
 | SocketCAN 原生后端 | 未实现 | 当前仓库没有对应后端 |
 | PEAK / PCAN 原生后端 | 未实现 | 当前仓库没有对应后端 |
 | Vector / VN 原生后端 | 未实现 | 当前仓库没有对应后端 |
@@ -131,11 +131,11 @@
 
 ### 真实硬件模式
 
-当前真实硬件模式要求：
+当前真实硬件模式已验证环境：
 
-- Windows 环境
+- Windows 环境（已验证；Linux/macOS 未验证）
 - 可用且版本匹配的 `libTSCAN.dll` 与 `libTSCAN.lib`
-- 可通过完整安装 `TSMaster` 获得运行库，也可单独提供匹配的 `LibTSCAN bundle`
+- 可通过完整安装 `TSMaster` 获得运行库，也可单独提供匹配的 `LibTSCAN bundle`（需遵守厂商许可）
 
 `canlink-tscan-sys` 支持以下常见方式：
 
@@ -211,7 +211,7 @@ canlink send tscan 0 0x123 01 02 03 04
 canlink receive tscan 0 --count 1
 ```
 
-> 真实硬件模式需要 Windows 与 LibTSCAN 运行库。
+> 真实硬件模式已在 Windows + LibTSCAN 运行库环境验证，其他平台尚未验证。
 
 
 ## 文档
