@@ -4,6 +4,8 @@
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
 
+> **重要提示**：`canlink-tscan` 依赖厂商 `LibTSCAN` 运行库（本项目不分发），当前仅在 Windows 环境完成验证。获取与配置见 `docs/guides/libtscan-setup-guide.md`。
+
 **一句话结论**：`CANLink-RS` 当前唯一已落地的真实硬件后端是 `LibTSCAN`。根据 `TSMaster/LibTSCAN` 文档，这条后端路径具备识别多种设备类型的能力；但本项目目前仅对同星 / TOSUN 相关硬件完成了实机接入与回归，其他文档枚举设备类型尚未逐项验证。
 
 ## 当前支持范围
