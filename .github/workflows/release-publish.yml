@@ -55,29 +55,38 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
           RELEASE_VERSION: ${{ github.event.inputs.version }}
         run: |
+          function Get-CrateVersion([string]$crate, [string]$version) {
+            try {
+              $resp = Invoke-RestMethod -UseBasicParsing "https://crates.io/api/v1/crates/$crate" -TimeoutSec 15
+              return ($resp.versions | Where-Object { $_.num -eq $version })
+            } catch {
+              return $null
+            }
+          }
+
           function Wait-ForCrateVersion([string]$crate, [string]$version) {
-            for ($i = 0; $i -lt 30; $i++) {
-              $line = cargo search $crate --limit 1
-              if ($LASTEXITCODE -eq 0) {
-                $expected = "$crate = `"$version`""
-                if ($line -like "$expected*") {
-                  Write-Host "$crate $version is indexed."
-                  return
-                }
+            for ($i = 0; $i -lt 60; $i++) {
+              $found = Get-CrateVersion $crate $version
+              if ($found) {
+                Write-Host "$crate $version is indexed."
+                return
               }
               Start-Sleep -Seconds 20
             }
             throw "Timeout waiting for $crate $version to be indexed on crates.io"
           }
 
-          cargo publish -p canlink-hal --locked
-          Wait-ForCrateVersion "canlink-hal" $env:RELEASE_VERSION
+          function Publish-IfMissing([string]$crate) {
+            $found = Get-CrateVersion $crate $env:RELEASE_VERSION
+            if ($found) {
+              Write-Host "[SKIP] $crate $env:RELEASE_VERSION already indexed."
+              return
+            }
+            cargo publish -p $crate --locked
+            Wait-ForCrateVersion $crate $env:RELEASE_VERSION
+          }
 
-          cargo publish -p canlink-tscan-sys --locked
-          Wait-ForCrateVersion "canlink-tscan-sys" $env:RELEASE_VERSION
-
-          cargo publish -p canlink-tscan --locked
-          Wait-ForCrateVersion "canlink-tscan" $env:RELEASE_VERSION
-
-          cargo publish -p canlink-cli --locked
-          Wait-ForCrateVersion "canlink-cli" $env:RELEASE_VERSION
+          Publish-IfMissing "canlink-hal"
+          Publish-IfMissing "canlink-tscan-sys"
+          Publish-IfMissing "canlink-tscan"
+          Publish-IfMissing "canlink-cli"
