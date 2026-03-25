@@ -15,7 +15,6 @@ pub enum CliError {
     #[error("Backend error: {0}")]
     BackendError(#[from] canlink_hal::CanError),
 
-
     /// Configuration error.
     #[error("Configuration error: {0}")]
     ConfigError(String),
