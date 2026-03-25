@@ -11,7 +11,8 @@
 
 ## 获取方式
 
-- 方式 A：安装 TSMaster 软件包，从安装目录中获取 LibTSCAN 运行库。
+- 推荐入口：优先从厂商 TSMaster API 下载页获取（`https://www.tosunai.com/downloads/tsmaster-api/`）。
+- 方式 A：安装 TSMaster 软件包，从安装目录中获取 LibTSCAN 运行库（下载入口：`https://www.tosunai.com/en/downloads/`）。
 - 方式 B：从厂商提供的 LibTSCAN 运行库包中获取（若厂商提供此类分发方式）。
 
 说明：无论通过哪种方式获取，均需遵守厂商许可。本项目不提供 DLL/Lib 的打包分发。

@@ -70,7 +70,9 @@ canlink-tscan = "0.3.0"
 
 从 TSMaster 官网下载并安装 LibTSCAN（本项目不提供 LibTSCAN 文件，请按厂商许可自行获取）：
 
-1. 下载 TSMaster 软件包
+1. 下载 TSMaster API（推荐）或 TSMaster 安装包
+   - TSMaster API 下载页：`https://www.tosunai.com/downloads/tsmaster-api/`
+   - TSMaster 安装包下载页：`https://www.tosunai.com/en/downloads/`
 2. 准备 `libTSCAN.dll` 与 `libTSCAN.lib`（x64）
 3. 按 `docs/guides/libtscan-setup-guide.md` 配置运行库路径与环境变量
 
