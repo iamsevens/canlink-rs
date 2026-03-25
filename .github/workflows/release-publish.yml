@@ -15,6 +15,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
+  CANLINK_TSCAN_ALLOW_MISSING_BUNDLE: "1"
 
 jobs:
   publish:
@@ -79,3 +80,4 @@ jobs:
           Wait-ForCrateVersion "canlink-tscan" $env:RELEASE_VERSION
 
           cargo publish -p canlink-cli --locked
+          Wait-ForCrateVersion "canlink-cli" $env:RELEASE_VERSION
