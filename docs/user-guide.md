@@ -27,12 +27,12 @@
 
 ```toml
 [dependencies]
-canlink-hal = "0.2"
-canlink-mock = "0.2"  # 用于测试
+canlink-hal = "0.3"
+canlink-mock = "0.3"  # 用于测试
 
 # 可选功能
 [dependencies.canlink-hal]
-version = "0.2"
+version = "0.3"
 features = ["async", "tracing", "hot-reload"]  # 按需启用
 ```
 
@@ -201,7 +201,7 @@ v0.2.0 引入了异步 API 支持，允许您在异步运行时（如 Tokio）�
 
 ```toml
 [dependencies]
-canlink-hal = { version = "0.2", features = ["async"] }
+canlink-hal = { version = "0.3", features = ["async"] }
 tokio = { version = "1", features = ["full"] }
 ```
 
@@ -657,7 +657,7 @@ v0.2.0 支持配置文件热重载，无需重启应用即可更新配置。
 
 ```toml
 [dependencies]
-canlink-hal = { version = "0.2", features = ["hot-reload"] }
+canlink-hal = { version = "0.3", features = ["hot-reload"] }
 ```
 
 ### ConfigWatcher 基本用法
@@ -1150,7 +1150,7 @@ v0.2.0 集成了 `tracing` 框架，提供结构化日志支持。
 
 ```toml
 [dependencies]
-canlink-hal = { version = "0.2", features = ["tracing"] }
+canlink-hal = { version = "0.3", features = ["tracing"] }
 tracing-subscriber = "0.3"
 ```
 

@@ -1,6 +1,6 @@
 ﻿# CANLink API 参考手册
 
-本文档提供 CANLink v0.2.0 的完整 API 参考。
+本文档提供 CANLink v0.3.0 的完整 API 参考。
 
 ## 目录
 
@@ -617,7 +617,7 @@ pub enum BusErrorKind {
 
 ## 周期性消息发送 API
 
-v0.2.0 新增周期性消息发送功能（需要 `periodic` feature）。
+v0.3.0 新增周期性消息发送功能（需要 `periodic` feature）。
 
 ### PeriodicMessage
 
@@ -776,7 +776,7 @@ pub struct PeriodicStats {
 
 ## ISO-TP 传输协议 API
 
-v0.2.0 新增 ISO-TP (ISO 15765-2) 传输协议支持（需要 `isotp` feature）。
+v0.3.0 新增 ISO-TP (ISO 15765-2) 传输协议支持（需要 `isotp` feature）。
 
 ### IsoTpConfig
 
@@ -1016,7 +1016,7 @@ pub enum IsoTpError {
 
 ## 版本历史
 
-- **v0.2.0** (当前): 周期性消息发送、ISO-TP 传输协议、异步 API、消息过滤、连接监控、队列管理、配置热重载
+- **v0.3.0** (当前): 周期性消息发送、ISO-TP 传输协议、异步 API、消息过滤、连接监控、队列管理、配置热重载
 - **v0.1.0**: 核心功能、Mock 后端、TSCan 后端（LibTSCAN 路径）、CLI 工具
 
 ---

@@ -15,8 +15,8 @@ name = "canlink"
 path = "src/main.rs"
 
 [dependencies]
-canlink-hal = { version = "0.2.0", path = "../canlink-hal", features = ["periodic"] }
-canlink-tscan = { version = "0.2.0", path = "../canlink-tscan" }
+canlink-hal = { version = "0.3.0", path = "../canlink-hal", features = ["periodic"] }
+canlink-tscan = { version = "0.3.0", path = "../canlink-tscan" }
 clap = { workspace = true }
 serde = { workspace = true }
 serde_json = "1.0"

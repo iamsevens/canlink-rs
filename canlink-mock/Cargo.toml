@@ -12,7 +12,7 @@ keywords = ["can", "canfd", "mock", "testing"]
 categories = ["development-tools::testing", "embedded"]
 
 [dependencies]
-canlink-hal = { version = "0.2.0", path = "../canlink-hal" }
+canlink-hal = { version = "0.3.0", path = "../canlink-hal" }
 serde = { workspace = true }
 serde_json = "1.0"
 thiserror = { workspace = true }

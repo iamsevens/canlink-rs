@@ -645,7 +645,13 @@ unsafe {
 
 
 
-需要 `libTSCAN.dll` 在以下位置之一：
+构建阶段需要同时找到 `libTSCAN.dll` 与 `libTSCAN.lib`（x64），推荐通过环境变量指定：
+
+1. `CANLINK_TSCAN_BUNDLE_DIR=<包含 libTSCAN.dll 和 libTSCAN.lib 的目录>`
+2. 或设置 `TSMASTER_HOME`（构建脚本会尝试 `<TSMASTER_HOME>/bin/x64` 与 `<TSMASTER_HOME>/bin`）
+3. 若未设置环境变量，构建脚本会回退尝试仓库内 `libs/` 与 vendor 示例目录
+
+运行时 `libTSCAN.dll` 还需要位于以下位置之一：
 
 
 
@@ -661,7 +667,7 @@ unsafe {
 
 
 
-在 `build.rs` 中配置：
+构建脚本会自动处理链接搜索路径与运行时 DLL 复制，无需手动修改 `build.rs`。核心链接指令如下：
 
 
 

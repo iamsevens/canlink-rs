@@ -156,7 +156,7 @@ fn test_cli_version() {
 
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("0.2.0"));
+        .stdout(predicate::str::contains("0.3.0"));
 }
 
 /// Test command with --json flag.

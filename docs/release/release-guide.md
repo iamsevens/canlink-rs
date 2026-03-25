@@ -720,15 +720,15 @@ git checkout -b develop
 
 
 
-# Update version to 0.2.1-dev
+# Update version to 0.3.1-dev
 
 # Edit Cargo.toml:
 
-# version = "0.2.1-dev"
+# version = "0.3.1-dev"
 
 
 
-git commit -am "chore: bump version to 0.2.1-dev"
+git commit -am "chore: bump version to 0.3.1-dev"
 
 git push origin develop
 
