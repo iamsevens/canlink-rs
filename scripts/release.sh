@@ -52,9 +52,8 @@ echo
 echo "Publish gate:"
 echo "  1. canlink-hal"
 echo "  2. canlink-tscan-sys"
-echo "  3. canlink-mock"
-echo "  4. canlink-tscan"
-echo "  5. canlink-cli"
+echo "  3. canlink-tscan"
+echo "  4. canlink-cli"
 echo "Rule:"
 echo "  publish one crate at a time"
 echo "  wait for crates.io indexing before the next crate"
@@ -72,6 +71,9 @@ echo "Running quality checks..."
 
 echo "Building documentation..."
 cargo doc --no-deps --all-features --workspace
+
+echo "Running vendor bundle guard..."
+python scripts/guard_vendor_bundle.py
 
 echo "Pre-release checks passed."
 echo
@@ -115,7 +117,6 @@ if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
     echo
     publish_crate canlink-hal "$VERSION"
     publish_crate canlink-tscan-sys "$VERSION"
-    publish_crate canlink-mock "$VERSION"
     publish_crate canlink-tscan "$VERSION"
     publish_crate canlink-cli "$VERSION"
     echo "crates.io publish completed."
@@ -124,7 +125,6 @@ else
     echo "Required manual order:"
     echo "  canlink-hal"
     echo "  canlink-tscan-sys"
-    echo "  canlink-mock"
     echo "  canlink-tscan"
     echo "  canlink-cli"
     echo "Wait for indexing after each crate before continuing."
@@ -137,7 +137,6 @@ echo "========================================"
 echo "Verify crates.io pages:"
 echo "  https://crates.io/crates/canlink-hal"
 echo "  https://crates.io/crates/canlink-tscan-sys"
-echo "  https://crates.io/crates/canlink-mock"
 echo "  https://crates.io/crates/canlink-tscan"
 echo "  https://crates.io/crates/canlink-cli"
 echo

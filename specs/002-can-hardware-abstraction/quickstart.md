@@ -20,7 +20,7 @@ CAN 硬件抽象层（`canlink-hal`）提供统一的接口来操作不同品牌
 ```toml
 [dependencies]
 canlink-hal = "1.0"
-canlink-mock = "1.0"  # Mock 后端用于测试
+canlink-mock = "0.2"  # Mock 后端用于测试
 
 # 如果需要异步支持
 # canlink-hal = { version = "1.0", features = ["async-tokio"] }

@@ -7,7 +7,8 @@
 //!
 //! ## Platform Support
 //!
-//! LibTSCAN is only available on Windows. This crate will fail to compile on other platforms.
+//! This crate currently only builds on Windows targets.
+//! LibTSCAN documentation includes non-Windows artifacts, but this crate has not been verified or adapted there yet.
 //!
 //! ## Usage
 //!

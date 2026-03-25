@@ -1,8 +1,10 @@
 # CANLink-RS
 
-[![Rust](https://img.shields.io/badge/rust-1.70%2B-orange.svg)](https://www.rust-lang.org/)
+[![Rust](https://img.shields.io/badge/rust-1.75%2B-orange.svg)](https://www.rust-lang.org/)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)
+
+> **重要提示**：`canlink-tscan` 依赖厂商 `LibTSCAN` 运行库（本项目不分发），当前仅在 Windows 环境完成验证。获取与配置见 `docs/guides/libtscan-setup-guide.md`。
 
 **一句话结论**：`CANLink-RS` 当前唯一已落地的真实硬件后端是 `LibTSCAN`。根据 `TSMaster/LibTSCAN` 文档，这条后端路径具备识别多种设备类型的能力；但本项目目前仅对同星 / TOSUN 相关硬件完成了实机接入与回归，其他文档枚举设备类型尚未逐项验证。
 
@@ -13,7 +15,7 @@
 | 类型 | 当前状态 | 说明 |
 |---|---|---|
 | Mock 后端 | 已实现 | 无需硬件，用于开发、测试、CI、回归 |
-| LibTSCAN 后端（`canlink-tscan`） | 已实现 | 当前唯一已落地的真实硬件接入路径，运行于 Windows |
+| LibTSCAN 后端（`canlink-tscan`） | 已实现 | 当前唯一已落地的真实硬件接入路径，已在 Windows 环境验证（其他平台未验证） |
 | SocketCAN 原生后端 | 未实现 | 当前仓库没有对应后端 |
 | PEAK / PCAN 原生后端 | 未实现 | 当前仓库没有对应后端 |
 | Vector / VN 原生后端 | 未实现 | 当前仓库没有对应后端 |
@@ -131,11 +133,11 @@
 
 ### 真实硬件模式
 
-当前真实硬件模式要求：
+当前真实硬件模式已验证环境：
 
-- Windows 环境
+- Windows 环境（已验证；Linux/macOS 未验证）
 - 可用且版本匹配的 `libTSCAN.dll` 与 `libTSCAN.lib`
-- 可通过完整安装 `TSMaster` 获得运行库，也可单独提供匹配的 `LibTSCAN bundle`
+- 可通过完整安装 `TSMaster` 获得运行库，也可单独提供匹配的 `LibTSCAN bundle`（需遵守厂商许可）
 
 `canlink-tscan-sys` 支持以下常见方式：
 
@@ -206,10 +208,13 @@ fn main() {
 cargo install --path canlink-cli
 
 canlink list
-canlink info mock
 canlink info tscan
-canlink send mock 0 0x123 01 02 03 04
+canlink send tscan 0 0x123 01 02 03 04
+canlink receive tscan 0 --count 1
 ```
+
+> 真实硬件模式已在 Windows + LibTSCAN 运行库环境验证，其他平台尚未验证。
+
 
 ## 文档
 

@@ -15,6 +15,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
+  CANLINK_TSCAN_ALLOW_MISSING_BUNDLE: "1"
 
 jobs:
   publish:
@@ -28,6 +29,9 @@ jobs:
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Guard vendor bundles
+        run: python scripts/guard_vendor_bundle.py
 
       - name: Validate inputs
         shell: powershell
@@ -72,10 +76,8 @@ jobs:
           cargo publish -p canlink-tscan-sys --locked
           Wait-ForCrateVersion "canlink-tscan-sys" $env:RELEASE_VERSION
 
-          cargo publish -p canlink-mock --locked
-          Wait-ForCrateVersion "canlink-mock" $env:RELEASE_VERSION
-
           cargo publish -p canlink-tscan --locked
           Wait-ForCrateVersion "canlink-tscan" $env:RELEASE_VERSION
 
           cargo publish -p canlink-cli --locked
+          Wait-ForCrateVersion "canlink-cli" $env:RELEASE_VERSION

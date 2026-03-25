@@ -20,16 +20,14 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Guard vendor bundles
+        run: python scripts/guard_vendor_bundle.py
+
       - name: Dry run canlink-hal
         run: cargo publish --dry-run -p canlink-hal --locked
 
       - name: Dry run canlink-tscan-sys
         run: cargo publish --dry-run -p canlink-tscan-sys --locked
-
-      - name: Dry run canlink-mock
-        run: >
-          cargo publish --dry-run -p canlink-mock --locked
-          --config "patch.crates-io.canlink-hal.path='canlink-hal'"
 
       - name: Dry run canlink-tscan
         run: >
@@ -41,6 +39,5 @@ jobs:
         run: >
           cargo publish --dry-run -p canlink-cli --locked
           --config "patch.crates-io.canlink-hal.path='canlink-hal'"
-          --config "patch.crates-io.canlink-mock.path='canlink-mock'"
           --config "patch.crates-io.canlink-tscan.path='canlink-tscan'"
           --config "patch.crates-io.canlink-tscan-sys.path='canlink-tscan-sys'"

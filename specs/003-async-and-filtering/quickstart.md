@@ -23,7 +23,7 @@
 ```toml
 [dependencies]
 canlink-hal = { version = "0.1", features = ["async", "tracing"] }
-canlink-mock = "0.1"
+canlink-mock = "0.2"
 
 # 异步运行时
 tokio = { version = "1", features = ["full"] }

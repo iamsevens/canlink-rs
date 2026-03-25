@@ -141,9 +141,6 @@ pub fn execute(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use canlink_hal::{CanBackend, CanMessage};
-    use canlink_mock::{MockBackend, MockBackendFactory, MockConfig};
-    use std::sync::Arc;
 
     #[test]
     fn test_receive_nonexistent_backend() {
@@ -151,35 +148,6 @@ mod tests {
         let formatter = OutputFormatter::new(false);
 
         let result = execute("nonexistent", 0, 1, &formatter);
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_receive_with_preset_messages() {
-        let registry = BackendRegistry::new();
-        let factory = Arc::new(MockBackendFactory::new());
-        registry.register(factory).unwrap();
-
-        // Create a mock backend with preset messages
-        let preset = vec![CanMessage::new_standard(0x123, &[1, 2, 3]).unwrap()];
-        let mock_config = MockConfig::with_preset_messages(preset);
-        let backend = MockBackend::with_config(mock_config);
-
-        // Note: This test demonstrates the pattern, but the actual CLI
-        // uses the registry which creates a default backend
-        assert_eq!(backend.name(), "mock");
-    }
-
-    #[test]
-    fn test_receive_no_messages() {
-        let registry = BackendRegistry::new();
-        let factory = Arc::new(MockBackendFactory::new());
-        registry.register(factory).unwrap();
-
-        let formatter = OutputFormatter::new(false);
-
-        // This will timeout since mock backend has no preset messages
-        let result = execute("mock", 0, 1, &formatter);
         assert!(result.is_err());
     }
 }

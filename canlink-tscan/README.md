@@ -51,11 +51,10 @@
 
 ## 系统要求
 
-- **操作系统**: Windows 10/11 (x64) - 当前实现
-  - LibTSCAN 本身支持 Windows、Linux 和 macOS
-  - Linux 和 macOS 支持计划在未来版本中实现
+- **操作系统**: 当前在 Windows 10/11 (x64) 完成验证
+  - LibTSCAN 文档包含 Linux/macOS 相关库与示例，但本 crate 尚未在这些平台验证
 - **硬件**: `LibTSCAN` 可识别的 CAN 硬件；当前已实机验证的是同星 / TOSUN 相关硬件
-- **依赖**: LibTSCAN 动态库 (Windows: libTSCAN.dll, Linux: libTSCAN.so, macOS: libTSCAN.dylib)
+- **依赖**: LibTSCAN 运行库（Windows: libTSCAN.dll + libTSCAN.lib；其他平台未验证）
 
 ## 安装
 
@@ -63,17 +62,17 @@
 
 ```toml
 [dependencies]
-canlink-hal = "0.1"
-canlink-tscan = "0.1"
+canlink-hal = "0.3.0"
+canlink-tscan = "0.3.0"
 ```
 
 ### 2. 安装 LibTSCAN
 
-从 TSMaster 官网下载并安装 LibTSCAN：
+从 TSMaster 官网下载并安装 LibTSCAN（本项目不提供 LibTSCAN 文件，请按厂商许可自行获取）：
 
 1. 下载 TSMaster 软件包
-2. 将 `libTSCAN.dll` 复制到系统路径或应用程序目录
-3. 确保 DLL 版本与您的硬件兼容
+2. 准备 `libTSCAN.dll` 与 `libTSCAN.lib`（x64）
+3. 按 `docs/guides/libtscan-setup-guide.md` 配置运行库路径与环境变量
 
 ### 3. 连接硬件
 
@@ -356,7 +355,7 @@ backend.open_channel(0)?;
 
 ## 限制
 
-- **平台**: 仅支持 Windows (x64)
+- **平台**: 当前仅在 Windows (x64) 验证，其他平台未验证
 - **依赖**: 需要 LibTSCAN 动态库
 - **硬件**: 需要物理 CAN 硬件与 `LibTSCAN` 运行环境；当前已验证的是同星 / TOSUN 相关硬件
 - **并发**: 单个后端实例不是线程安全的

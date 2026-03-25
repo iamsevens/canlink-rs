@@ -8,7 +8,7 @@
 - CAN 总线终端电阻（如果需要）
 
 ### 2. 软件要求
-- Windows 操作系统（LibTSCAN 仅支持 Windows）
+- Windows 操作系统（当前测试流程在 Windows 验证，其他平台未验证）
 - TSMaster 软件已安装
 - libTSCAN.dll 文件
 

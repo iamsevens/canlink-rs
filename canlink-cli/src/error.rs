@@ -15,9 +15,6 @@ pub enum CliError {
     #[error("Backend error: {0}")]
     BackendError(#[from] canlink_hal::CanError),
 
-    /// Generic operation error (string-based).
-    #[error("{0}")]
-    OperationError(String),
 
     /// Configuration error.
     #[error("Configuration error: {0}")]
@@ -50,7 +47,6 @@ impl CliError {
         match self {
             CliError::BackendNotFound(_) => 2,
             CliError::BackendError(_) => 3,
-            CliError::OperationError(_) => 3,
             CliError::ConfigError(_) => 4,
             CliError::InvalidArgument(_) => 5,
             CliError::IoError(_) => 6,
@@ -79,8 +75,8 @@ mod tests {
 
     #[test]
     fn test_error_display() {
-        let err = CliError::BackendNotFound("mock".to_string());
-        assert_eq!(err.to_string(), "Backend not found: mock");
+        let err = CliError::BackendNotFound("tscan".to_string());
+        assert_eq!(err.to_string(), "Backend not found: tscan");
 
         let err = CliError::InvalidArgument("bad value".to_string());
         assert_eq!(err.to_string(), "Invalid argument: bad value");

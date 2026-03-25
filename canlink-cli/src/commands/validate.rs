@@ -72,7 +72,7 @@ mod tests {
     fn test_validate_valid_config() {
         let mut temp_file = NamedTempFile::new().unwrap();
         writeln!(temp_file, "[backend]").unwrap();
-        writeln!(temp_file, "backend_name = \"mock\"").unwrap();
+        writeln!(temp_file, "backend_name = \"tscan\"").unwrap();
         temp_file.flush().unwrap();
 
         let formatter = OutputFormatter::new(false);

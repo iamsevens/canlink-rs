@@ -248,7 +248,7 @@ pub mod registry;
 pub mod state;
 pub mod version;
 
-// New modules for v0.2.0 (003-async-and-filtering)
+// New modules introduced in v0.2.0 (003-async-and-filtering)
 pub mod filter;
 pub mod monitor;
 pub mod queue;

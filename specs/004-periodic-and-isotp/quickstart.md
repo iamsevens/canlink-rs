@@ -19,7 +19,7 @@
 ```toml
 [dependencies]
 canlink-hal = { version = "0.3", features = ["periodic", "isotp"] }
-canlink-mock = "0.3"  # 用于测试
+canlink-mock = "0.2"  # 用于测试
 tokio = { version = "1", features = ["full"] }
 ```
 

@@ -21,7 +21,7 @@
 
 ```toml
 [dependencies]
-canlink-hal = "0.1"
+canlink-hal = "0.3.0"
 ```
 
 ## 核心概念

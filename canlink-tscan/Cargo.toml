@@ -11,8 +11,8 @@ keywords = ["can", "canbus", "tsmaster", "hardware"]
 categories = ["hardware-support", "api-bindings"]
 
 [dependencies]
-canlink-hal = { version = "0.2.0", path = "../canlink-hal" }
-canlink-tscan-sys = { version = "0.2.0", path = "../canlink-tscan-sys" }
+canlink-hal = { version = "0.3.0", path = "../canlink-hal" }
+canlink-tscan-sys = { version = "0.3.0", path = "../canlink-tscan-sys" }
 thiserror = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = "1.0"

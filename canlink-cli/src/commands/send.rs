@@ -171,8 +171,6 @@ fn execute_periodic(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use canlink_mock::MockBackendFactory;
-    use std::sync::Arc;
 
     #[test]
     fn test_send_nonexistent_backend() {
@@ -181,56 +179,5 @@ mod tests {
 
         let result = execute("nonexistent", 0, 0x123, &[], None, None, &formatter);
         assert!(result.is_err());
-    }
-
-    #[test]
-    fn test_send_invalid_data() {
-        let registry = BackendRegistry::global();
-        let factory = Arc::new(MockBackendFactory::new());
-        let _ = registry.register(factory);
-
-        let formatter = OutputFormatter::new(false);
-        let data = vec!["ZZ".to_string()]; // Invalid hex
-
-        let result = execute("mock", 0, 0x123, &data, None, None, &formatter);
-        assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), CliError::ParseError(_)));
-    }
-
-    #[test]
-    fn test_send_too_much_data() {
-        let registry = BackendRegistry::global();
-        let factory = Arc::new(MockBackendFactory::new());
-        let _ = registry.register(factory);
-
-        let formatter = OutputFormatter::new(false);
-        let data = vec![
-            "01".to_string(),
-            "02".to_string(),
-            "03".to_string(),
-            "04".to_string(),
-            "05".to_string(),
-            "06".to_string(),
-            "07".to_string(),
-            "08".to_string(),
-            "09".to_string(), // 9 bytes - too much
-        ];
-
-        let result = execute("mock", 0, 0x123, &data, None, None, &formatter);
-        assert!(result.is_err());
-        assert!(matches!(result.unwrap_err(), CliError::InvalidArgument(_)));
-    }
-
-    #[test]
-    fn test_send_valid_message() {
-        let registry = BackendRegistry::global();
-        let factory = Arc::new(MockBackendFactory::new());
-        let _ = registry.register(factory);
-
-        let formatter = OutputFormatter::new(false);
-        let data = vec!["01".to_string(), "02".to_string(), "03".to_string()];
-
-        let result = execute("mock", 0, 0x123, &data, None, None, &formatter);
-        assert!(result.is_ok());
     }
 }

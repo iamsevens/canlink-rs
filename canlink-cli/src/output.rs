@@ -158,11 +158,11 @@ mod tests {
     #[test]
     fn test_backend_list_output() {
         let output = BackendListOutput {
-            backends: vec!["mock".to_string(), "tsmaster".to_string()],
+            backends: vec!["tscan".to_string(), "demo".to_string()],
         };
         let json = serde_json::to_string(&output).unwrap();
-        assert!(json.contains("mock"));
-        assert!(json.contains("tsmaster"));
+        assert!(json.contains("tscan"));
+        assert!(json.contains("demo"));
     }
 
     #[test]

@@ -6,6 +6,7 @@ use assert_cmd::Command;
 use predicates::prelude::*;
 use std::fs;
 use tempfile::NamedTempFile;
+
 fn canlink() -> Command {
     assert_cmd::cargo::cargo_bin_cmd!("canlink")
 }
@@ -18,8 +19,7 @@ fn test_cli_list_command() {
 
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("Available backends"))
-        .stdout(predicate::str::contains("mock"));
+        .stdout(predicate::str::contains("backends"));
 }
 
 /// Test the list command with JSON output.
@@ -30,35 +30,7 @@ fn test_cli_list_json() {
 
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("\"backends\""))
-        .stdout(predicate::str::contains("\"mock\""));
-}
-
-/// Test the info command.
-#[test]
-fn test_cli_info_command() {
-    let mut cmd = canlink();
-    cmd.arg("info").arg("mock");
-
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("Backend: mock"))
-        .stdout(predicate::str::contains("Version:"))
-        .stdout(predicate::str::contains("Channels:"))
-        .stdout(predicate::str::contains("CAN-FD Support:"));
-}
-
-/// Test the info command with JSON output.
-#[test]
-fn test_cli_info_json() {
-    let mut cmd = canlink();
-    cmd.arg("--json").arg("info").arg("mock");
-
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("\"name\""))
-        .stdout(predicate::str::contains("\"version\""))
-        .stdout(predicate::str::contains("\"channel_count\""));
+        .stdout(predicate::str::contains("\"backends\""));
 }
 
 /// Test the info command with non-existent backend.
@@ -73,65 +45,17 @@ fn test_cli_info_nonexistent() {
         .stderr(predicate::str::contains("Backend not found"));
 }
 
-/// Test the send command.
-#[test]
-fn test_cli_send_command() {
-    let mut cmd = canlink();
-    cmd.arg("send")
-        .arg("mock")
-        .arg("0")
-        .arg("0x123")
-        .arg("01")
-        .arg("02")
-        .arg("03");
-
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("Message sent"))
-        .stdout(predicate::str::contains("ID=0x123"));
-}
-
-/// Test the send command with invalid data.
-#[test]
-fn test_cli_send_invalid_data() {
-    let mut cmd = canlink();
-    cmd.arg("send").arg("mock").arg("0").arg("0x123").arg("ZZ"); // Invalid hex
-
-    cmd.assert()
-        .failure()
-        .code(7)
-        .stderr(predicate::str::contains("Parse error"));
-}
-
-/// Test the send command with too much data.
-#[test]
-fn test_cli_send_too_much_data() {
-    let mut cmd = canlink();
-    cmd.arg("send")
-        .arg("mock")
-        .arg("0")
-        .arg("0x123")
-        .arg("01")
-        .arg("02")
-        .arg("03")
-        .arg("04")
-        .arg("05")
-        .arg("06")
-        .arg("07")
-        .arg("08")
-        .arg("09"); // 9 bytes - too much for CAN 2.0
-
-    cmd.assert()
-        .failure()
-        .code(5)
-        .stderr(predicate::str::contains("Invalid argument"));
-}
-
 /// Test the validate command with valid config.
 #[test]
 fn test_cli_validate_valid() {
     let temp_file = NamedTempFile::new().unwrap();
-    fs::write(temp_file.path(), "[backend]\nbackend_name = \"mock\"\n").unwrap();
+    fs::write(
+        temp_file.path(),
+        r#"[backend]
+backend_name = "tscan"
+"#,
+    )
+    .unwrap();
 
     let mut cmd = canlink();
     cmd.arg("validate").arg(temp_file.path());
@@ -182,7 +106,46 @@ fn test_cli_help() {
         .stdout(predicate::str::contains("info"))
         .stdout(predicate::str::contains("send"))
         .stdout(predicate::str::contains("receive"))
-        .stdout(predicate::str::contains("validate"));
+        .stdout(predicate::str::contains("validate"))
+        .stdout(predicate::str::contains("filter").not())
+        .stdout(predicate::str::contains("monitor").not())
+        .stdout(predicate::str::contains("isotp").not());
+}
+
+/// Test removed command: filter
+#[test]
+fn test_cli_filter_removed() {
+    let mut cmd = canlink();
+    cmd.arg("filter");
+
+    cmd.assert()
+        .failure()
+        .code(2)
+        .stderr(predicate::str::contains("unrecognized subcommand"));
+}
+
+/// Test removed command: monitor
+#[test]
+fn test_cli_monitor_removed() {
+    let mut cmd = canlink();
+    cmd.arg("monitor");
+
+    cmd.assert()
+        .failure()
+        .code(2)
+        .stderr(predicate::str::contains("unrecognized subcommand"));
+}
+
+/// Test removed command: isotp
+#[test]
+fn test_cli_isotp_removed() {
+    let mut cmd = canlink();
+    cmd.arg("isotp");
+
+    cmd.assert()
+        .failure()
+        .code(2)
+        .stderr(predicate::str::contains("unrecognized subcommand"));
 }
 
 /// Test the --version flag.
@@ -193,7 +156,7 @@ fn test_cli_version() {
 
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("0.2.0"));
+        .stdout(predicate::str::contains("0.3.0"));
 }
 
 /// Test command with --json flag.
@@ -202,5 +165,7 @@ fn test_cli_global_json_flag() {
     let mut cmd = canlink();
     cmd.arg("--json").arg("list");
 
-    cmd.assert().success().stdout(predicate::str::contains("["));
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("\"backends\""));
 }

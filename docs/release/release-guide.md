@@ -1,4 +1,4 @@
-# Release Guide - CANLink-RS
+﻿# Release Guide - CANLink-RS
 
 ## GitHub Actions Release Flow
 
@@ -7,17 +7,17 @@
   - Purpose: runs `fmt + clippy + build + test + doc test + doc` as the main branch quality gate
 - `Release Dry Run`: `.github/workflows/release-dryrun.yml`
   - Trigger: `workflow_dispatch`
-  - Purpose: runs `cargo publish --dry-run` for all 5 crates and applies `patch.crates-io` for unpublished internal dependencies
+- Purpose: runs `cargo publish --dry-run` for all 4 crates and applies `patch.crates-io` for unpublished internal dependencies
 - `Release Publish`: `.github/workflows/release-publish.yml`
   - Trigger: `workflow_dispatch`
   - Inputs: `version`, `confirm=publish`
-  - Purpose: publishes `canlink-hal -> canlink-tscan-sys -> canlink-mock -> canlink-tscan -> canlink-cli` and waits for crates.io indexing after each step
+  - Purpose: publishes `canlink-hal -> canlink-tscan-sys -> canlink-tscan -> canlink-cli` and waits for crates.io indexing after each step
 
 ## Release Gate
 
 The workspace cannot be published as a single bulk action. Release must remain strictly serialized because later crates depend on earlier crates being available on crates.io.
 
-- Required order: `canlink-hal -> canlink-tscan-sys -> canlink-mock -> canlink-tscan -> canlink-cli`
+- Required order: `canlink-hal -> canlink-tscan-sys -> canlink-tscan -> canlink-cli`
 - Publish exactly one crate at a time
 - After each publish, wait until the target version is indexed on crates.io
 - Only then continue to the next crate
@@ -36,11 +36,20 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
 - `canlink-tscan-sys` allows missing local vendor bundles during `cargo package` / `cargo publish --dry-run` verification builds
 - For local development or hardware debugging, set `CANLINK_TSCAN_BUNDLE_DIR` when you want to force a specific bundle path
 
+### Vendor Asset Boundary (Required)
+
+- Do **not** publish or bundle any vendor binaries (`libTSCAN.dll`, `libTSCAN.lib`, `libTSCAN.so`, `libTSCAN.dylib`).
+- Vendor raw materials under `docs/vendor/tsmaster/**` must remain local-only.
+- The release guard (`scripts/guard_vendor_bundle.py`) runs in:
+  - GitHub Actions release workflows
+  - Local release scripts (`scripts/release.bat` / `scripts/release.sh`)
+- If the guard fails, stop the release and remove the vendor files from tracked content or packaging inputs.
+
 
 
 **Project**: CANLink-RS - CAN Hardware Abstraction Layer
 
-**Target Version**: v0.2.0
+**Target Version**: v0.3.0
 
 **Date**: 2026-01-09
 
@@ -147,7 +156,7 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
 
   ```toml
   [workspace.package]
-  version = "0.2.0"
+  version = "0.3.0"
   ```
 
 - [ ] **Update version in documentation**
@@ -170,8 +179,6 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
 
   - `canlink-tscan-sys/README.md`
 
-  - `canlink-mock/README.md`
-
   - `canlink-tscan/README.md`
 
   - `canlink-cli/README.md`
@@ -186,7 +193,7 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
 
 
 
-  ## [0.2.0] - 2026-01-09
+  ## [0.3.0] - 2026-01-09
 
 
 
@@ -197,8 +204,6 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
   - Hardware abstraction layer (`canlink-hal`)
 
   - LibTSCAN FFI bindings (`canlink-tscan-sys`)
-
-  - Mock backend for testing (`canlink-mock`)
 
   - LibTSCAN backend (`canlink-tscan`)
 
@@ -286,9 +291,10 @@ Use `docs/release/final-release-checklist.md` as the final operator checklist be
 
   cargo run -p canlink-cli -- list
 
-  cargo run -p canlink-cli -- info mock
+  cargo run -p canlink-cli -- info tscan
 
-  cargo run -p canlink-cli -- send mock 0 0x123 01 02 03
+  # Requires LibTSCAN runtime and connected hardware
+  cargo run -p canlink-cli -- send tscan 0 0x123 01 02 03
 
   ```
 
@@ -334,7 +340,7 @@ Edit the following files:
 
 [workspace.package]
 
-version = "0.2.0"
+version = "0.3.0"
 
 ```
 
@@ -374,7 +380,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-## [0.2.0] - 2026-01-09
+## [0.3.0] - 2026-01-09
 
 
 
@@ -387,8 +393,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hardware abstraction layer (`canlink-hal`) with unified backend interface
 
 - LibTSCAN FFI bindings (`canlink-tscan-sys`) for vendor integration
-
-- Mock backend (`canlink-mock`) for testing without hardware
 
 - LibTSCAN backend (`canlink-tscan`) for Windows CAN hardware access
 
@@ -478,7 +482,7 @@ git add -A
 
 # Commit with release message
 
-git commit -m "chore: prepare release v0.2.0"
+git commit -m "chore: prepare release v0.3.0"
 
 
 
@@ -501,7 +505,7 @@ git push origin main
 3. Confirm `CHANGELOG.md`, version metadata, and README content one last time
 
 4. Confirm the publish order:
-   `canlink-hal -> canlink-tscan-sys -> canlink-mock -> canlink-tscan -> canlink-cli`
+   `canlink-hal -> canlink-tscan-sys -> canlink-tscan -> canlink-cli`
 
 5. Confirm whether the repository should be public before or after crates.io publish
 
@@ -525,11 +529,11 @@ git pull origin main
 
 # Create annotated tag
 
-git tag -a v0.2.0 -m "Release v0.2.0
+git tag -a v0.3.0 -m "Release v0.3.0
 
 
 
-CANLink-RS v0.2.0 - Release
+CANLink-RS v0.3.0 - Release
 
 
 
@@ -555,7 +559,7 @@ See CHANGELOG.md for details.
 
 # Push tag
 
-git push origin v0.2.0
+git push origin v0.3.0
 
 ```
 
@@ -569,9 +573,9 @@ git push origin v0.2.0
 
 2. Click "Draft a new release"
 
-3. Select tag: `v0.2.0`
+3. Select tag: `v0.3.0`
 
-4. Release title: `v0.2.0 - Release`
+4. Release title: `v0.3.0 - Release`
 
 5. Description: Copy from CHANGELOG.md
 
@@ -611,16 +615,7 @@ cargo publish --dry-run --locked
 
 cargo publish --locked
 
-# 3. Wait for indexing, then publish canlink-mock
-
-cd ../canlink-mock
-
-cargo publish --dry-run --locked \
-  --config "patch.crates-io.canlink-hal.path='canlink-hal'"
-
-cargo publish --locked
-
-# 4. Wait for indexing, then publish canlink-tscan
+# 3. Wait for indexing, then publish canlink-tscan
 
 cd ../canlink-tscan
 
@@ -630,13 +625,12 @@ cargo publish --dry-run --locked \
 
 cargo publish --locked
 
-# 5. Wait for indexing, then publish canlink-cli
+# 4. Wait for indexing, then publish canlink-cli
 
 cd ../canlink-cli
 
 cargo publish --dry-run --locked \
   --config "patch.crates-io.canlink-hal.path='canlink-hal'" \
-  --config "patch.crates-io.canlink-mock.path='canlink-mock'" \
   --config "patch.crates-io.canlink-tscan.path='canlink-tscan'" \
   --config "patch.crates-io.canlink-tscan-sys.path='canlink-tscan-sys'"
 
@@ -671,8 +665,6 @@ cargo login <your-api-token>
 open https://crates.io/crates/canlink-hal
 
 open https://crates.io/crates/canlink-tscan-sys
-
-open https://crates.io/crates/canlink-mock
 
 open https://crates.io/crates/canlink-tscan
 
@@ -728,15 +720,15 @@ git checkout -b develop
 
 
 
-# Update version to 0.2.1-dev
+# Update version to 0.3.1-dev
 
 # Edit Cargo.toml:
 
-# version = "0.2.1-dev"
+# version = "0.3.1-dev"
 
 
 
-git commit -am "chore: bump version to 0.2.1-dev"
+git commit -am "chore: bump version to 0.3.1-dev"
 
 git push origin develop
 
@@ -822,21 +814,21 @@ git push origin develop
 
 # Delete local tag
 
-git tag -d v0.2.0
+git tag -d v0.3.0
 
 
 
 # Delete remote tag
 
-git push origin :refs/tags/v0.2.0
+git push origin :refs/tags/v0.3.0
 
 
 
 # Recreate tag
 
-git tag -a v0.2.0 -m "Release v0.2.0"
+git tag -a v0.3.0 -m "Release v0.3.0"
 
-git push origin v0.2.0
+git push origin v0.3.0
 
 ```
 
@@ -908,7 +900,7 @@ git push origin v0.2.0
 
 # Full release workflow
 
-./scripts/release.sh v0.2.0
+./scripts/release.sh v0.3.0
 
 
 
@@ -919,13 +911,13 @@ git pull origin main
 
 # Update versions and CHANGELOG
 
-git commit -am "chore: prepare release v0.2.0"
+git commit -am "chore: prepare release v0.3.0"
 
 git push origin main
 
-git tag -a v0.2.0 -m "Release v0.2.0"
+git tag -a v0.3.0 -m "Release v0.3.0"
 
-git push origin v0.2.0
+git push origin v0.3.0
 
 # Publish to crates.io
 
@@ -962,4 +954,5 @@ git push origin v0.2.0
 
 **Last Updated**: 2026-01-09
 
-**Status**: Ready for v0.2.0 Release
+**Status**: Ready for v0.3.0 Release
+

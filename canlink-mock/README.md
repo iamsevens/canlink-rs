@@ -16,8 +16,23 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dev-dependencies]
-canlink-mock = "0.1"
-canlink-hal = "0.1"
+canlink-mock = "0.2"
+canlink-hal = "0.2"
+```
+
+## Async Support
+
+By default, `canlink-mock` enables the `tokio` feature to keep workspace async tests working.
+If you want a minimal sync-only build, disable default features:
+
+```toml
+canlink-mock = { version = "0.2", default-features = false }
+```
+
+If you need async helpers, enable `async-tokio`:
+
+```toml
+canlink-mock = { version = "0.2", features = ["async-tokio"] }
 ```
 
 ## Quick Start
