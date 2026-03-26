@@ -1,4 +1,4 @@
-﻿//! # CANLink TSCan Backend
+//! # CANLink TSCan Backend
 //! <a id="en"></a>
 //! [English](#en) | [中文](#zh)
 //!
@@ -129,4 +129,3 @@ mod tests {
         assert_eq!(backend.name(), "tscan");
     }
 }
-

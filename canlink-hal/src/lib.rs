@@ -1,4 +1,4 @@
-﻿//! # CANLink HAL
+//! # CANLink HAL
 //! <a id="en"></a>
 //! [English](#en) | [中文](#zh)
 //!
@@ -142,4 +142,3 @@ pub use isotp::{
     AddressingMode, FlowStatus, FrameSize, IsoTpConfig, IsoTpConfigBuilder, IsoTpError, IsoTpFrame,
     IsoTpState, RxState, StMin, TxState,
 };
-

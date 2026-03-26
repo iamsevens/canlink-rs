@@ -1,4 +1,4 @@
-﻿//! # CANLink CLI
+//! # CANLink CLI
 //! <a id="en"></a>
 //! [English](#en) | [中文](#zh)
 //!
@@ -206,4 +206,3 @@ fn main() {
         }
     }
 }
-
