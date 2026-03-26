@@ -2,7 +2,7 @@
 //! <a id="en"></a>
 //! [English](#en) | [中文](#zh)
 //!
-//! CANLink HAL is the core hardware abstraction layer of CANLink. It defines the
+//! `CANLink` HAL is the core hardware abstraction layer of `CANLink`. It defines the
 //! `CanBackend` trait, message types, and the backend registry used by real
 //! hardware backends.
 //!
@@ -31,18 +31,18 @@
 //! ## Scope
 //!
 //! This crate is hardware-agnostic. The only real-hardware backend currently
-//! landed in this repository is `canlink-tscan` (LibTSCAN).
+//! landed in this repository is `canlink-tscan` (`LibTSCAN`).
 //!
 //! ## Related Crates
 //!
-//! - [`canlink-tscan-sys`](https://docs.rs/canlink-tscan-sys) - LibTSCAN FFI
-//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - LibTSCAN backend
+//! - [`canlink-tscan-sys`](https://docs.rs/canlink-tscan-sys) - `LibTSCAN` FFI
+//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - `LibTSCAN` backend
 //! - [`canlink-cli`](https://docs.rs/canlink-cli) - CLI tool
 //!
 //! <a id="zh"></a>
 //! [中文](#zh) | [English](#en)
 //!
-//! CANLink HAL 是 CANLink 的核心硬件抽象层，定义 `CanBackend` trait、消息类型以及后端注册表。
+//! `CANLink` HAL 是 `CANLink` 的核心硬件抽象层，定义 `CanBackend` trait、消息类型以及后端注册表。
 //!
 //! ## 快速开始
 //!
@@ -68,14 +68,15 @@
 //!
 //! ## 定位
 //!
-//! 本 crate 与具体硬件无关。当前仓库唯一已落地的真实硬件后端是 `canlink-tscan`（LibTSCAN）。
+//! 本 crate 与具体硬件无关。当前仓库唯一已落地的真实硬件后端是 `canlink-tscan`（`LibTSCAN`）。
 //!
 //! ## 相关包
 //!
-//! - [`canlink-tscan-sys`](https://docs.rs/canlink-tscan-sys) - LibTSCAN FFI 绑定
-//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - LibTSCAN 后端
+//! - [`canlink-tscan-sys`](https://docs.rs/canlink-tscan-sys) - `LibTSCAN` FFI 绑定
+//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - `LibTSCAN` 后端
 //! - [`canlink-cli`](https://docs.rs/canlink-cli) - 命令行工具
-//!#![deny(missing_docs)]
+//!
+#![deny(missing_docs)]
 #![warn(clippy::all)]
 #![warn(clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]
