@@ -21,7 +21,9 @@ Real-hardware regression in this repository is limited to TOSUN-related devices.
 ## Platform Support
 
 - Windows 10/11 x64 (validated)
-- LibTSCAN runtime required (`libTSCAN.dll` + `libTSCAN.lib`)
+- Vendor package may include Windows x86 / Linux artifacts, but they are not validated here
+- LibTSCAN runtime required (minimum `libTSCAN.dll` + `libTSCAN.lib`; dependent DLLs such as `libTSH.dll` may also be required)
+- Full vendor runtime bundle is recommended
 - LibTSCAN is not distributed by this project
 
 ## Installation
@@ -55,8 +57,10 @@ unsafe {
 
 ## Build and Runtime Requirements
 
-- Provide `libTSCAN.dll` and `libTSCAN.lib` (x64) during build.
-- At runtime, `libTSCAN.dll` must be in the executable directory or in `PATH`.
+- Build/link requires `libTSCAN.lib`, and runtime requires `libTSCAN.dll`.
+- In practice, dependent DLLs (for example `libTSH.dll`) may also be required by `libTSCAN.dll`.
+- For reliability, provide the full vendor runtime bundle for the matching architecture (x64/x86).
+- At runtime, ensure required DLLs are in the executable directory or in `PATH`.
 - See `docs/guides/libtscan-setup-guide.md` for setup details.
 
 ## Related Crates
@@ -90,7 +94,9 @@ CANLink TSCan Sys 提供 LibTSCAN C API 的底层 Rust FFI 绑定（不安全接
 ## 平台支持
 
 - Windows 10/11 x64（已验证）
-- 需要 LibTSCAN 运行库（`libTSCAN.dll` + `libTSCAN.lib`）
+- 厂商包可能包含 Windows x86 / Linux 相关库，但这些目标尚未在本项目验证
+- 需要 LibTSCAN 运行库（最低要求 `libTSCAN.dll` + `libTSCAN.lib`，且可能需要依赖 DLL，如 `libTSH.dll`）
+- 建议使用厂商提供的完整运行库目录
 - 本项目不分发 LibTSCAN 文件
 
 ## 安装
@@ -124,8 +130,10 @@ unsafe {
 
 ## 构建与运行要求
 
-- 构建时提供 `libTSCAN.dll` 与 `libTSCAN.lib`（x64）。
-- 运行时 `libTSCAN.dll` 需在可执行文件目录或 `PATH` 中。
+- 构建/链接需要 `libTSCAN.lib`，运行时需要 `libTSCAN.dll`。
+- 实际运行中，`libTSCAN.dll` 可能还依赖其他 DLL（例如 `libTSH.dll`）。
+- 为保证稳定性，建议按目标位数（x64/x86）提供厂商完整运行库目录。
+- 运行时确保所需 DLL 位于可执行文件目录或 `PATH` 中。
 - 具体配置参考 `docs/guides/libtscan-setup-guide.md`。
 
 ## 相关包

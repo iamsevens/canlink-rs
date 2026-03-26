@@ -15,7 +15,9 @@
 //! ## Requirements
 //!
 //! - Windows 10/11 x64 (validated)
-//! - `LibTSCAN` runtime (`libTSCAN.dll` + `libTSCAN.lib`)
+//! - Vendor packages may include Windows x86 / Linux artifacts, but they are not validated here
+//! - `LibTSCAN` runtime (minimum `libTSCAN.dll` + `libTSCAN.lib`; dependent DLLs such as `libTSH.dll` may also be required)
+//! - Full vendor runtime bundle is recommended for deployment
 //! - `LibTSCAN` is not distributed by this project
 //!
 //! ## Quick Start
@@ -66,7 +68,9 @@
 //! ## 环境要求
 //!
 //! - Windows 10/11 x64（已验证）
-//! - `LibTSCAN` 运行库（`libTSCAN.dll` + `libTSCAN.lib`）
+//! - 厂商包可能包含 Windows x86 / Linux 相关库，但这些目标尚未在本项目验证
+//! - `LibTSCAN` 运行库（最低要求 `libTSCAN.dll` + `libTSCAN.lib`，且可能需要依赖 DLL，如 `libTSH.dll`）
+//! - 部署时建议使用厂商提供的完整运行库目录
 //! - 本项目不分发 `LibTSCAN` 文件
 //!
 //! ## 快速开始

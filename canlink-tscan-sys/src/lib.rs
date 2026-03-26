@@ -11,8 +11,12 @@
 //!
 //! ## Platform
 //!
-//! Windows 10/11 x64 is validated. `LibTSCAN` runtime (`libTSCAN.dll` +
-//! `libTSCAN.lib`) is required and is not distributed by this project.
+//! Windows 10/11 x64 is validated in this project.
+//! Vendor packages may also include Windows x86 / Linux artifacts, but they are
+//! not validated here, and this crate currently compiles only for Windows targets.
+//! `LibTSCAN` runtime is required and is not distributed by this project.
+//! In practice, besides `libTSCAN.dll` + `libTSCAN.lib`, dependent DLLs such as
+//! `libTSH.dll` may also be required; using the full vendor runtime bundle is recommended.
 //!
 //! ## Basic Usage
 //!
@@ -53,8 +57,12 @@
 //!
 //! ## 平台
 //!
-//! 当前仅在 Windows 10/11 x64 环境验证。需要 `LibTSCAN` 运行库
-//! （`libTSCAN.dll` + `libTSCAN.lib`），且本项目不分发该运行库。
+//! 当前仅在 Windows 10/11 x64 环境验证。
+//! 厂商包中可能包含 Windows x86 / Linux 相关库，但这些目标在本项目中尚未验证，
+//! 且当前 crate 仅在 Windows 目标下编译。
+//! 需要 `LibTSCAN` 运行库，且本项目不分发该运行库。
+//! 实际运行中，除 `libTSCAN.dll` + `libTSCAN.lib` 外，通常还需要依赖 DLL（如 `libTSH.dll`）；
+//! 建议使用厂商提供的完整运行库目录。
 //!
 //! ## 基础用法
 //!

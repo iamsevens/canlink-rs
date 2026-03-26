@@ -37,7 +37,9 @@ The list below is derived from official `TSMaster/LibTSCAN` headers and API docs
 ## Requirements
 
 - Windows 10/11 x64 (validated; other platforms not validated)
-- LibTSCAN runtime (`libTSCAN.dll` + `libTSCAN.lib`)
+- Vendor package may include Windows x86 / Linux artifacts, but those targets are not validated in this project
+- LibTSCAN runtime (minimum `libTSCAN.dll` + `libTSCAN.lib`; dependent DLLs such as `libTSH.dll` may also be required)
+- Full vendor runtime bundle is recommended
 - LibTSCAN is not distributed by this project
 
 ## Installation
@@ -51,7 +53,7 @@ canlink-tscan = "0.3.0"
 ## Setup LibTSCAN
 
 1. Download the TSMaster API bundle or install TSMaster to obtain LibTSCAN.
-2. Prepare `libTSCAN.dll` and `libTSCAN.lib` (x64).
+2. For Windows x64, prepare the matching vendor runtime bundle (minimum `libTSCAN.dll` + `libTSCAN.lib`, and usually dependency DLLs like `libTSH.dll`).
 3. Configure runtime paths by following `docs/guides/libtscan-setup-guide.md`.
 
 > This backend depends on the LibTSCAN runtime, not the TSMaster GUI itself.
@@ -150,7 +152,9 @@ CANLink TSCan Backend 是基于 LibTSCAN 的真实硬件后端，实现了 `canl
 ## 环境要求
 
 - Windows 10/11 x64（已验证；其他平台未验证）
-- LibTSCAN 运行库（`libTSCAN.dll` + `libTSCAN.lib`）
+- 厂商包可能包含 Windows x86 / Linux 相关库，但这些目标在本项目中尚未验证
+- LibTSCAN 运行库（最低要求 `libTSCAN.dll` + `libTSCAN.lib`，且可能需要依赖 DLL，如 `libTSH.dll`）
+- 建议使用厂商提供的完整运行库目录
 - 本项目不分发 LibTSCAN 文件
 
 ## 安装
@@ -164,7 +168,7 @@ canlink-tscan = "0.3.0"
 ## 安装与配置 LibTSCAN
 
 1. 下载 TSMaster API 包或安装 TSMaster 获取 LibTSCAN。
-2. 准备 `libTSCAN.dll` 与 `libTSCAN.lib`（x64）。
+2. Windows x64 请准备匹配版本的厂商运行库目录（最低要求 `libTSCAN.dll` + `libTSCAN.lib`，通常还需要 `libTSH.dll` 等依赖 DLL）。
 3. 参考 `docs/guides/libtscan-setup-guide.md` 配置运行库路径。
 
 > 本后端依赖的是 LibTSCAN 运行库，而不是 TSMaster GUI 本身。

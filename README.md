@@ -138,7 +138,8 @@ CANLink 是一个围绕 `TSMaster/LibTSCAN` 构建的 CAN 接入层，保留了 
 当前真实硬件模式已验证环境：
 
 - Windows 环境（已验证；Linux/macOS 未验证）
-- 可用且版本匹配的 `libTSCAN.dll` 与 `libTSCAN.lib`
+- 可用且版本匹配的 LibTSCAN 运行库（最低要求 `libTSCAN.dll` + `libTSCAN.lib`，通常还需 `libTSH.dll` 等依赖 DLL）
+- 建议使用厂商提供的完整运行库目录（按目标位数 x64/x86 匹配）
 - 可通过完整安装 `TSMaster` 获得运行库，也可单独提供匹配的 `LibTSCAN bundle`（需遵守厂商许可）
 
 `canlink-tscan-sys` 支持以下常见方式：
@@ -365,7 +366,8 @@ No hardware and no TSMaster installation required.
 Validated environment so far:
 
 - Windows (validated; Linux/macOS not validated)
-- Matching `libTSCAN.dll` and `libTSCAN.lib`
+- Matching LibTSCAN runtime bundle (minimum `libTSCAN.dll` + `libTSCAN.lib`, and usually dependent DLLs such as `libTSH.dll`)
+- Full vendor runtime bundle is recommended for the target architecture (x64/x86)
 - Runtime obtained via full TSMaster installation or a standalone LibTSCAN bundle (subject to vendor license)
 
 `canlink-tscan-sys` supports these discovery paths:

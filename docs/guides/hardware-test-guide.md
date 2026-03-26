@@ -10,7 +10,7 @@
 ### 2. 软件要求
 - Windows 操作系统（当前测试流程在 Windows 验证，其他平台未验证）
 - TSMaster 软件已安装
-- libTSCAN.dll 文件
+- LibTSCAN 运行库目录（建议完整包；最低包含 `libTSCAN.lib` + `libTSCAN.dll`，通常还需要 `libTSH.dll` 等依赖 DLL）
 
 ## 🔧 安装步骤
 
@@ -20,33 +20,33 @@
 2. 运行安装程序
 3. 默认安装路径：`C:\Program Files\TSMaster\`
 
-### 步骤 2: 定位 libTSCAN.dll
+### 步骤 2: 定位 LibTSCAN 运行库目录
 
-LibTSCAN.dll 通常位于以下位置之一：
-- `C:\Program Files\TSMaster\bin\libTSCAN.dll`
-- `C:\Program Files (x86)\TSMaster\bin\libTSCAN.dll`
-- TSMaster 安装目录下的 `bin` 文件夹
+常见位置（以实际安装版本为准）：
+- `C:\Program Files (x86)\TOSUN\TSMaster\bin64\`
+- `C:\Program Files (x86)\TOSUN\TSMaster\bin\`
+- API 包解压目录中的 `lib/lib/windows/x64` 或 `lib/lib/windows/x86`
 
-### 步骤 3: 配置 DLL 路径
+### 步骤 3: 配置运行库路径
 
-有三种方法可以让程序找到 DLL：
+有三种方法可以让程序找到运行库：
 
 #### 方法 1: 添加到系统 PATH（推荐）
 ```cmd
 # 临时添加（当前会话有效）
-set PATH=%PATH%;C:\Program Files\TSMaster\bin
+set PATH=%PATH%;C:\Program Files (x86)\TOSUN\TSMaster\bin64
 
 # 永久添加（需要管理员权限）
-setx PATH "%PATH%;C:\Program Files\TSMaster\bin"
+setx PATH "%PATH%;C:\Program Files (x86)\TOSUN\TSMaster\bin64"
 ```
 
-#### 方法 2: 复制 DLL 到项目目录
+#### 方法 2: 复制运行时 DLL 到项目目录
 ```cmd
-# 复制到 target/debug 目录
-copy "C:\Program Files\TSMaster\bin\libTSCAN.dll" .\target\debug\
+# 复制到 target/debug 目录（示例：复制 bin64 下所有 DLL）
+copy "C:\Program Files (x86)\TOSUN\TSMaster\bin64\*.dll" .\target\debug\
 
 # 复制到 target/release 目录
-copy "C:\Program Files\TSMaster\bin\libTSCAN.dll" .\target\release\
+copy "C:\Program Files (x86)\TOSUN\TSMaster\bin64\*.dll" .\target\release\
 ```
 
 #### 方法 3: 修改 build.rs 指定路径
@@ -146,9 +146,9 @@ error while loading shared libraries: libTSCAN.dll: cannot open shared object fi
 ```
 
 **解决方法**:
-1. 检查 DLL 是否存在
-2. 将 DLL 路径添加到 PATH
-3. 或复制 DLL 到可执行文件目录
+1. 检查 `libTSCAN.dll` 是否存在
+2. 同时检查依赖 DLL（如 `libTSH.dll`）是否存在
+3. 将运行库目录加入 PATH，或复制完整 DLL 集到可执行文件目录
 
 ### 问题 2: 找不到设备
 
@@ -262,7 +262,7 @@ if result != 0 {
 在运行测试前，确认：
 
 - [ ] TSMaster 软件已安装
-- [ ] libTSCAN.dll 可访问（在 PATH 或项目目录）
+- [ ] `libTSCAN.dll` 与依赖 DLL（如 `libTSH.dll`）可访问（在 PATH 或项目目录）
 - [ ] TSMaster 设备已连接
 - [ ] 设备驱动已安装
 - [ ] 没有其他程序占用设备
