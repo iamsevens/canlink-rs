@@ -31,13 +31,13 @@ jobs:
 
       - name: Dry run canlink-tscan
         run: >
-          cargo publish --dry-run -p canlink-tscan --locked
+          cargo publish --dry-run -p canlink-tscan --locked --no-verify
           --config "patch.crates-io.canlink-hal.path='canlink-hal'"
           --config "patch.crates-io.canlink-tscan-sys.path='canlink-tscan-sys'"
 
       - name: Dry run canlink-cli
         run: >
-          cargo publish --dry-run -p canlink-cli --locked
+          cargo publish --dry-run -p canlink-cli --locked --no-verify
           --config "patch.crates-io.canlink-hal.path='canlink-hal'"
           --config "patch.crates-io.canlink-tscan.path='canlink-tscan'"
           --config "patch.crates-io.canlink-tscan-sys.path='canlink-tscan-sys'"

@@ -76,17 +76,21 @@ jobs:
             throw "Timeout waiting for $crate $version to be indexed on crates.io"
           }
 
-          function Publish-IfMissing([string]$crate) {
+          function Publish-IfMissing([string]$crate, [bool]$noVerify = $false) {
             $found = Get-CrateVersion $crate $env:RELEASE_VERSION
             if ($found) {
               Write-Host "[SKIP] $crate $env:RELEASE_VERSION already indexed."
               return
             }
-            cargo publish -p $crate --locked
+            if ($noVerify) {
+              cargo publish -p $crate --locked --no-verify
+            } else {
+              cargo publish -p $crate --locked
+            }
             Wait-ForCrateVersion $crate $env:RELEASE_VERSION
           }
 
           Publish-IfMissing "canlink-hal"
           Publish-IfMissing "canlink-tscan-sys"
-          Publish-IfMissing "canlink-tscan"
-          Publish-IfMissing "canlink-cli"
+          Publish-IfMissing "canlink-tscan" $true
+          Publish-IfMissing "canlink-cli" $true
