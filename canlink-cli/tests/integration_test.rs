@@ -151,12 +151,13 @@ fn test_cli_isotp_removed() {
 /// Test the --version flag.
 #[test]
 fn test_cli_version() {
+    let expected_version = env!("CARGO_PKG_VERSION");
     let mut cmd = canlink();
     cmd.arg("--version");
 
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("0.3.0"));
+        .stdout(predicate::str::contains(expected_version));
 }
 
 /// Test command with --json flag.

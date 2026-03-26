@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-03-26
+
+### Changed
+
+#### Documentation and Release Readiness
+- Unified bilingual crate-level documentation (Chinese/English anchors and consistent wording)
+- Fixed Rust doc comments that triggered CI `clippy` failures (`doc_markdown`, `doc_lazy_continuation`)
+- Corrected CLI crate docs formatting to avoid rustdoc paragraph/list parsing issues
+- Normalized `CANLink` / `LibTSCAN` / `TSMaster` naming in Rust doc comments for stable lint behavior
+
 ## [0.3.0] - 2026-03-25
 
 ### Added
