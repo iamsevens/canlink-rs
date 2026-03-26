@@ -1,4 +1,4 @@
-//! CAN message types and related structures.
+﻿//! CAN message types and related structures.
 //!
 //! This module provides unified, hardware-independent representations of CAN messages,
 //! identifiers, timestamps, and message flags.

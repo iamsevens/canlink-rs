@@ -1,4 +1,4 @@
-//! `MessageFilter` trait definition (FR-005)
+﻿//! `MessageFilter` trait definition (FR-005)
 //!
 //! Defines the interface for message filtering.
 

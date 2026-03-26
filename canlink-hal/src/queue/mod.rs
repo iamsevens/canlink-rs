@@ -1,4 +1,4 @@
-//! Queue management module (FR-011, FR-017)
+﻿//! Queue management module (FR-011, FR-017)
 //!
 //! This module provides bounded queue functionality with configurable
 //! overflow policies for CAN message handling.

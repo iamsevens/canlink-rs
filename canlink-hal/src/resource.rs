@@ -1,12 +1,12 @@
-//! Resource Management Guidelines and Best Practices (FR-012)
+﻿//! Resource Management Guidelines and Best Practices (FR-012)
 //!
 //! This module provides documentation and utilities for proper resource management
-//! in CANLink-RS. Following these guidelines ensures no memory leaks or handle leaks
+//! in `CANLink`. Following these guidelines ensures no memory leaks or handle leaks
 //! in long-running applications.
 //!
 //! # Resource Management Philosophy
 //!
-//! CANLink-RS follows Rust's RAII (Resource Acquisition Is Initialization) pattern.
+//! `CANLink` follows Rust's RAII (Resource Acquisition Is Initialization) pattern.
 //! All resources are automatically released when their owning objects go out of scope.
 //! This is achieved through proper implementation of the [`Drop`] trait.
 //!
@@ -232,7 +232,7 @@
 //!
 //! # Drop Trait Implementations
 //!
-//! All resource-holding types in CANLink-RS implement `Drop`:
+//! All resource-holding types in `CANLink` implement `Drop`:
 //!
 //! | Type | Drop Behavior |
 //! |------|---------------|

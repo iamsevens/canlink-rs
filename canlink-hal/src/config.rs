@@ -1,4 +1,4 @@
-//! Configuration management for backends.
+﻿//! Configuration management for backends.
 //!
 //! This module provides types for loading and managing backend configuration
 //! from TOML files.
@@ -28,7 +28,7 @@ use std::path::Path;
 /// ```
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct BackendConfig {
-    /// Backend name (e.g., "tsmaster", "mock", "peak")
+    /// Backend name (e.g., "`TSMaster`", "mock", "peak")
     pub backend_name: String,
 
     /// Number of initialization retry attempts (default: 3)

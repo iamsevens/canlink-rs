@@ -1,4 +1,4 @@
-//! ID filter implementation (FR-006)
+﻿//! ID filter implementation (FR-006)
 //!
 //! Provides single ID and mask-based filtering.
 

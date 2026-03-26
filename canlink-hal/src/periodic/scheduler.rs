@@ -1,4 +1,4 @@
-//! Periodic message scheduler.
+﻿//! Periodic message scheduler.
 
 use super::{PeriodicMessage, PeriodicStats};
 use crate::{CanBackendAsync, CanError};

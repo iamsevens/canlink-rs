@@ -1,8 +1,8 @@
-//! # CANLink CLI
+﻿//! # `CANLink` CLI
 //! <a id="en"></a>
 //! [English](#en) | [中文](#zh)
 //!
-//! Command-line interface for interacting with CAN hardware through the CANLink HAL.
+//! Command-line interface for interacting with CAN hardware through the `CANLink` HAL.
 //!
 //! ## Features
 //!
@@ -24,18 +24,18 @@
 //!
 //! ## Requirements
 //!
-//! Real hardware usage requires Windows and the LibTSCAN runtime.
+//! Real hardware usage requires Windows and the `LibTSCAN` runtime.
 //!
 //! ## Related Crates
 //!
 //! - [`canlink-hal`](https://docs.rs/canlink-hal) - Core HAL
-//! - [`canlink-tscan-sys`](https://docs.rs/canlink-tscan-sys) - LibTSCAN FFI bindings
-//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - LibTSCAN backend
+//! - [`canlink-tscan-sys`](https://docs.rs/canlink-tscan-sys) - `LibTSCAN` FFI bindings
+//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - `LibTSCAN` backend
 //!
 //! <a id="zh"></a>
 //! [中文](#zh) | [English](#en)
 //!
-//! CANLink HAL 的命令行工具，用于与 CAN 硬件交互。
+//! `CANLink` HAL 的命令行工具，用于与 CAN 硬件交互。
 //!
 //! ## 功能
 //!
@@ -57,14 +57,15 @@
 //!
 //! ## 环境要求
 //!
-//! 真实硬件模式需要 Windows 与 LibTSCAN 运行库。
+//! 真实硬件模式需要 Windows 与 `LibTSCAN` 运行库。
 //!
 //! ## 相关包
 //!
 //! - [`canlink-hal`](https://docs.rs/canlink-hal) - 核心 HAL
-//! - [`canlink-tscan-sys`](https://docs.rs/canlink-tscan-sys) - LibTSCAN FFI 绑定
-//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - LibTSCAN 后端
-//!#![deny(missing_docs)]
+//! - [`canlink-tscan-sys`](https://docs.rs/canlink-tscan-sys) - `LibTSCAN` FFI 绑定
+//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - `LibTSCAN` 后端
+//!
+#![deny(missing_docs)]
 
 mod commands;
 mod error;

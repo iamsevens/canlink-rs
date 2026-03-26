@@ -1,6 +1,6 @@
-//! Basic LibTSCAN hardware connection test
+﻿//! Basic `LibTSCAN` hardware connection test
 //!
-//! This example demonstrates basic LibTSCAN usage:
+//! This example demonstrates basic `LibTSCAN` usage:
 //! 1. Initialize library
 //! 2. Scan for devices
 //! 3. Connect to device
@@ -11,8 +11,8 @@
 //! 8. Cleanup
 //!
 //! **Requirements**:
-//! - Connected LibTSCAN-compatible hardware (validated in this repository on TOSUN-related devices)
-//! - libTSCAN.dll in PATH or executable directory
+//! - Connected `LibTSCAN`-compatible hardware (validated in this repository on TOSUN-related devices)
+//! - `LibTSCAN`.dll in PATH or executable directory
 
 use canlink_tscan_sys::*;
 use std::ffi::CStr;

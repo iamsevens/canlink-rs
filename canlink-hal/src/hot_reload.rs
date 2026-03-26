@@ -1,4 +1,4 @@
-//! Configuration hot reload support (FR-014)
+﻿//! Configuration hot reload support (FR-014)
 //!
 //! Provides file watching and automatic configuration reloading.
 //! This module is only available when the `hot-reload` feature is enabled.

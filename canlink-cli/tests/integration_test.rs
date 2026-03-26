@@ -1,4 +1,4 @@
-//! Integration tests for the canlink CLI.
+﻿//! Integration tests for the `CANLink` CLI.
 //!
 //! These tests verify the CLI commands work correctly end-to-end.
 

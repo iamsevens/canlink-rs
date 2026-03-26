@@ -1,16 +1,16 @@
-//! Error conversion for LibTSCAN backend.
+﻿//! Error conversion for `LibTSCAN` backend.
 //!
-//! This module converts LibTSCAN error codes (u32) to the unified `CanError` type.
+//! This module converts `LibTSCAN` error codes (u32) to the unified `CanError` type.
 
 use canlink_hal::CanError;
 use canlink_tscan_sys::tscan_get_error_description;
 use std::ffi::CStr;
 use std::os::raw::c_char;
 
-/// Convert LibTSCAN error code to CanError.
+/// Convert `LibTSCAN` error code to CanError.
 ///
 /// # Arguments
-/// * `code` - LibTSCAN error code (0 = success, non-zero = error)
+/// * `code` - `LibTSCAN` error code (0 = success, non-zero = error)
 ///
 /// # Returns
 /// * `Ok(())` if code is 0
@@ -33,13 +33,13 @@ pub fn check_error(code: u32) -> Result<(), CanError> {
     }
 }
 
-/// Convert LibTSCAN error code to CanError with detailed description.
+/// Convert `LibTSCAN` error code to CanError with detailed description.
 ///
-/// This function queries LibTSCAN for the error description and maps
+/// This function queries `LibTSCAN` for the error description and maps
 /// the error code to the appropriate CanError variant.
 ///
 /// # Arguments
-/// * `code` - LibTSCAN error code
+/// * `code` - `LibTSCAN` error code
 ///
 /// # Returns
 /// Appropriate `CanError` variant based on the error code
@@ -96,7 +96,7 @@ fn convert_error(code: u32) -> CanError {
     }
 }
 
-/// Get error description from LibTSCAN.
+/// Get error description from `LibTSCAN`.
 ///
 /// # Arguments
 /// * `code` - Error code

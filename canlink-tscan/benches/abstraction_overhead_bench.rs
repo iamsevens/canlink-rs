@@ -1,4 +1,4 @@
-//! SC-005 Abstraction Layer Overhead Benchmark
+﻿//! SC-005 Abstraction Layer Overhead Benchmark
 //!
 //! This benchmark verifies that the abstraction layer overhead is < 5% compared
 //! to direct structure operations.
@@ -31,7 +31,7 @@
 //! ## Note on Hardware Testing
 //!
 //! For complete SC-005 verification with actual hardware message transmission:
-//! 1. Connect validated LibTSCAN-compatible hardware (currently TOSUN-related devices in this repository)
+//! 1. Connect validated `LibTSCAN`-compatible hardware (currently TOSUN-related devices in this repository)
 //! 2. The actual send overhead will be measured with real hardware
 
 use canlink_hal::{CanId, CanMessage};

@@ -1,4 +1,4 @@
-//! Simple DLL loading test to verify libTSCAN.dll
+﻿//! Simple DLL loading test to verify `LibTSCAN`.dll
 
 use std::env;
 use std::ffi::CString;

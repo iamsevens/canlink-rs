@@ -1,4 +1,4 @@
-//! Periodic message sending example.
+﻿//! Periodic message sending example.
 //!
 //! This example demonstrates:
 //! - Creating a periodic message scheduler

@@ -1,4 +1,4 @@
-//! Mock backend configuration.
+﻿//! Mock backend configuration.
 //!
 //! This module provides configuration structures for the Mock backend,
 //! allowing customization of hardware capabilities, preset messages, and error injection.

@@ -1,4 +1,4 @@
-//! Range filter implementation (FR-006)
+﻿//! Range filter implementation (FR-006)
 //!
 //! Provides ID range-based filtering.
 

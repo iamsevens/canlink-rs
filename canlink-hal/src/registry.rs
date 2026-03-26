@@ -1,4 +1,4 @@
-//! Backend registry for managing and discovering hardware backends.
+﻿//! Backend registry for managing and discovering hardware backends.
 //!
 //! This module provides the `BackendRegistry` for registering, querying, and creating
 //! backend instances at runtime.

@@ -1,4 +1,4 @@
-//! Logging module (FR-013)
+﻿//! Logging module (FR-013)
 //!
 //! This module provides logging functionality using the `tracing` framework.
 //! It is conditionally compiled when the `tracing` feature is enabled.

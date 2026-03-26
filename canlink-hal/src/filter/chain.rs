@@ -1,4 +1,4 @@
-//! Filter chain implementation (FR-006)
+﻿//! Filter chain implementation (FR-006)
 //!
 //! Manages multiple filters with automatic hardware/software fallback.
 

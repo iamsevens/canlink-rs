@@ -1,7 +1,7 @@
-//! CAN-FD hardware verification test.
+﻿//! CAN-FD hardware verification test.
 //!
-//! This example tests CAN-FD message transmission and reception with real LibTSCAN-backed hardware.
-//! It requires a connected TSMaster device that supports CAN-FD.
+//! This example tests CAN-FD message transmission and reception with real `LibTSCAN`-backed hardware.
+//! It requires a connected `TSMaster` device that supports CAN-FD.
 //!
 //! # Test Scenarios
 //!
@@ -12,7 +12,7 @@
 //!
 //! # Hardware Requirements
 //!
-//! - LibTSCAN-compatible CAN-FD capable device (validated in this repository on TOSUN-related devices)
+//! - `LibTSCAN`-compatible CAN-FD capable device (validated in this repository on TOSUN-related devices)
 //! - Properly terminated CAN bus
 //! - Optional: Second CAN device for loopback testing
 

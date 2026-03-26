@@ -1,7 +1,7 @@
-//! Integration test for TSCanBackend with real hardware.
+﻿//! Integration test for TSCanBackend with real hardware.
 //!
 //! This example demonstrates using the TSCanBackend through the CanBackend trait.
-//! It requires a connected TSMaster device to run successfully.
+//! It requires a connected `TSMaster` device to run successfully.
 
 use canlink_hal::{BackendConfig, CanBackend, CanMessage};
 use canlink_tscan::TSCanBackend;

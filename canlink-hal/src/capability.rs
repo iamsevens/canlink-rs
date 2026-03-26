@@ -1,4 +1,4 @@
-//! Hardware capability types.
+﻿//! Hardware capability types.
 //!
 //! This module defines types for describing hardware capabilities and limitations.
 

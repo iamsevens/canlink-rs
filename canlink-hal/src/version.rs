@@ -1,4 +1,4 @@
-//! Version management and compatibility checking.
+﻿//! Version management and compatibility checking.
 //!
 //! This module provides types for managing backend versions and checking compatibility.
 

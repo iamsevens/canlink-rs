@@ -1,16 +1,16 @@
-//! Message conversion between LibTSCAN and HAL types.
+﻿//! Message conversion between `LibTSCAN` and HAL types.
 //!
-//! This module provides conversion functions between LibTSCAN's native
+//! This module provides conversion functions between `LibTSCAN`'s native
 //! message structures (TLIBCAN, TLIBCANFD) and the unified HAL types
 //! (CanMessage, CanId, etc.).
 
 use canlink_hal::{CanError, CanId, CanMessage, MessageFlags, Timestamp};
 use canlink_tscan_sys::types::*;
 
-/// Convert LibTSCAN TLIBCAN to HAL CanMessage.
+/// Convert `LibTSCAN` TLIBCAN to HAL CanMessage.
 ///
 /// # Arguments
-/// * `msg` - LibTSCAN CAN message
+/// * `msg` - `LibTSCAN` CAN message
 ///
 /// # Returns
 /// Converted HAL CanMessage
@@ -61,14 +61,14 @@ pub fn from_tlibcan(msg: &TLIBCAN) -> CanMessage {
     message
 }
 
-/// Convert HAL CanMessage to LibTSCAN TLIBCAN.
+/// Convert HAL CanMessage to `LibTSCAN` TLIBCAN.
 ///
 /// # Arguments
 /// * `msg` - HAL CAN message
 /// * `channel` - Channel index (0-based)
 ///
 /// # Returns
-/// * `Ok(TLIBCAN)` - Converted LibTSCAN message
+/// * `Ok(TLIBCAN)` - Converted `LibTSCAN` message
 /// * `Err(CanError)` - If message cannot be converted (e.g., data too long)
 ///
 /// # Examples
@@ -122,10 +122,10 @@ pub fn to_tlibcan(msg: &CanMessage, channel: u8) -> Result<TLIBCAN, CanError> {
     })
 }
 
-/// Convert LibTSCAN TLIBCANFD to HAL CanMessage.
+/// Convert `LibTSCAN` TLIBCANFD to HAL CanMessage.
 ///
 /// # Arguments
-/// * `msg` - LibTSCAN CAN-FD message
+/// * `msg` - `LibTSCAN` CAN-FD message
 ///
 /// # Returns
 /// Converted HAL CanMessage with FD flags
@@ -174,14 +174,14 @@ pub fn from_tlibcanfd(msg: &TLIBCANFD) -> CanMessage {
     message
 }
 
-/// Convert HAL CanMessage to LibTSCAN TLIBCANFD.
+/// Convert HAL CanMessage to `LibTSCAN` TLIBCANFD.
 ///
 /// # Arguments
 /// * `msg` - HAL CAN message (should have FD flag set)
 /// * `channel` - Channel index (0-based)
 ///
 /// # Returns
-/// * `Ok(TLIBCANFD)` - Converted LibTSCAN CAN-FD message
+/// * `Ok(TLIBCANFD)` - Converted `LibTSCAN` CAN-FD message
 /// * `Err(CanError)` - If message cannot be converted (e.g., data too long)
 ///
 /// # Examples

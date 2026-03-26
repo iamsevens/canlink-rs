@@ -1,4 +1,4 @@
-//! Connection monitoring module (FR-010)
+﻿//! Connection monitoring module (FR-010)
 //!
 //! This module provides connection state monitoring with optional
 //! automatic reconnection support.

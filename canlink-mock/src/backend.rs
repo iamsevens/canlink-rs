@@ -1,4 +1,4 @@
-//! Mock backend implementation.
+﻿//! Mock backend implementation.
 //!
 //! This module provides the `MockBackend` implementation of the `CanBackend` trait
 //! for testing purposes.

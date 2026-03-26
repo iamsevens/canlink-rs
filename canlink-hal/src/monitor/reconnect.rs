@@ -1,4 +1,4 @@
-//! Reconnection configuration (FR-010)
+﻿//! Reconnection configuration (FR-010)
 
 use std::time::Duration;
 

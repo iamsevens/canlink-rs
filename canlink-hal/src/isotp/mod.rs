@@ -1,4 +1,4 @@
-//! ISO-TP (ISO 15765-2) transport protocol module.
+﻿//! ISO-TP (ISO 15765-2) transport protocol module.
 //!
 //! This module provides functionality for transmitting data larger than a single CAN frame
 //! using the ISO-TP segmentation and reassembly protocol.

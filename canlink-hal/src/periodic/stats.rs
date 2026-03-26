@@ -1,4 +1,4 @@
-//! Periodic message statistics.
+﻿//! Periodic message statistics.
 
 use std::time::{Duration, Instant};
 

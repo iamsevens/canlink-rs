@@ -1,4 +1,4 @@
-//! Async API usage example for CANLink.
+﻿//! Async API usage example for `CANLink`.
 //!
 //! This example demonstrates how to use the async API for CAN communication.
 //!

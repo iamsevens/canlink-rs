@@ -1,4 +1,4 @@
-//! # `CANLink` TSCan Sys
+﻿//! # `CANLink` TSCan Sys
 //! <a id="en"></a>
 //! [English](#en) | [中文](#zh)
 //!

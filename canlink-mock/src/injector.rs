@@ -1,4 +1,4 @@
-//! Error injection for testing.
+﻿//! Error injection for testing.
 //!
 //! This module provides error injection capabilities for the Mock backend,
 //! allowing tests to simulate various error conditions.

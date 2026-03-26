@@ -1,4 +1,4 @@
-//! Backend switching example for CANLink HAL.
+﻿//! Backend switching example for `CANLink` HAL.
 //!
 //! This example demonstrates:
 //! - Registering multiple backends with the global registry
@@ -108,7 +108,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// Application code that works with any backend.
 ///
 /// This function demonstrates that the same code can work with any
-/// backend implementation (Mock, TSMaster, PEAK, etc.) without modification.
+/// backend implementation (Mock, `TSMaster`, PEAK, etc.) without modification.
 fn use_backend(backend: &mut dyn CanBackend) -> Result<(), Box<dyn std::error::Error>> {
     // Initialize
     let config = BackendConfig::new(backend.name());

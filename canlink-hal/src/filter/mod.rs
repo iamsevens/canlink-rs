@@ -1,4 +1,4 @@
-//! Message filtering module (FR-005 to FR-009)
+﻿//! Message filtering module (FR-005 to FR-009)
 //!
 //! This module provides message filtering functionality for CAN messages,
 //! supporting both hardware and software filtering.

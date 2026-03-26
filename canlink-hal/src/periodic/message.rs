@@ -1,4 +1,4 @@
-//! Periodic message configuration.
+﻿//! Periodic message configuration.
 
 use crate::{CanError, CanMessage};
 use std::time::Duration;

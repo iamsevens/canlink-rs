@@ -1,4 +1,4 @@
-//! # `CANLink` Mock Backend
+﻿//! # `CANLink` Mock Backend
 //!
 //! This crate provides a mock implementation of the CAN hardware abstraction layer
 //! for testing purposes. It allows testing CAN applications without physical hardware.

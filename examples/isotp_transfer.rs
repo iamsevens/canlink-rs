@@ -1,4 +1,4 @@
-//! ISO-TP transfer protocol example.
+﻿//! ISO-TP transfer protocol example.
 //!
 //! This example demonstrates:
 //! - Creating an ISO-TP channel

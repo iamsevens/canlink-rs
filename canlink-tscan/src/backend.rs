@@ -1,4 +1,4 @@
-//! LibTSCAN CAN backend implementation.
+﻿//! `LibTSCAN` CAN backend implementation.
 
 use canlink_hal::{
     BackendConfig, BackendFactory, BackendVersion, CanBackend, CanError, CanId, CanMessage,
@@ -34,7 +34,7 @@ enum BackendMode {
     Daemon,
 }
 
-/// CAN backend implementation for TOSUN TSMaster devices.
+/// CAN backend implementation for TOSUN `TSMaster` devices.
 pub struct TSCanBackend {
     state: BackendState,
     mode: BackendMode,

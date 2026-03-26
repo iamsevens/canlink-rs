@@ -1,4 +1,4 @@
-//! Queue overflow policy (FR-011)
+﻿//! Queue overflow policy (FR-011)
 //!
 //! Defines strategies for handling queue overflow situations.
 

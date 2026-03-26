@@ -1,4 +1,4 @@
-//! Backend state management.
+﻿//! Backend state management.
 //!
 //! This module defines the lifecycle states of a backend.
 

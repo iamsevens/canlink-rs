@@ -1,4 +1,4 @@
-//! Connection monitor implementation (FR-010)
+﻿//! Connection monitor implementation (FR-010)
 //!
 //! Provides connection state monitoring with optional auto-reconnect.
 

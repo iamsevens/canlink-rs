@@ -1,4 +1,4 @@
-//! ISO-TP channel implementation.
+﻿//! ISO-TP channel implementation.
 
 use super::config::{AddressingMode, IsoTpConfig};
 use super::error::IsoTpError;

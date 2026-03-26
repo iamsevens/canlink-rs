@@ -1,7 +1,7 @@
-//! Backend trait contract tests.
+﻿//! Backend trait contract tests.
 //!
 //! These tests verify that backend implementations correctly follow the CanBackend trait contract.
-//! All backends (Mock, TSMaster, PEAK, etc.) must pass these tests.
+//! All backends (Mock, `TSMaster`, PEAK, etc.) must pass these tests.
 
 use canlink_hal::{BackendConfig, BackendState, CanBackend, CanError, CanId, CanMessage};
 use canlink_mock::MockBackend;

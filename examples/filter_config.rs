@@ -1,4 +1,4 @@
-//! Filter Configuration Example (T033)
+﻿//! Filter Configuration Example (T033)
 //!
 //! This example demonstrates how to use the canlink-hal filter module
 //! and load filter configurations from TOML files.

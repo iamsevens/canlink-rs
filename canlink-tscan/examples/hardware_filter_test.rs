@@ -1,7 +1,7 @@
-//! Hardware filter performance test for SC-002 verification.
+﻿//! Hardware filter performance test for SC-002 verification.
 //!
 //! This test measures CPU load reduction when using hardware filtering
-//! vs software filtering on real LibTSCAN-backed hardware.
+//! vs software filtering on real `LibTSCAN`-backed hardware.
 //!
 //! **Test Methodology**:
 //! 1. Receive all messages (no filter) for 10 seconds, count messages and measure CPU time
@@ -12,7 +12,7 @@
 //! Hardware filtering should reduce CPU load by >= 50%
 //!
 //! **Requirements**:
-//! - Connected LibTSCAN-compatible hardware (validated in this repository on TOSUN-related devices)
+//! - Connected `LibTSCAN`-compatible hardware (validated in this repository on TOSUN-related devices)
 //! - Active CAN bus with traffic
 
 use canlink_hal::filter::{FilterChain, IdFilter};

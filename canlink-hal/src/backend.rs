@@ -1,4 +1,4 @@
-//! Backend trait definitions and factory pattern.
+﻿//! Backend trait definitions and factory pattern.
 //!
 //! This module defines the core `CanBackend` trait that all hardware backends must implement,
 //! as well as the `BackendFactory` trait for creating backend instances.
@@ -492,7 +492,7 @@ pub trait CanBackend: Send {
 
     /// Get the backend name.
     ///
-    /// Returns the unique identifier name of the backend (e.g., "tsmaster", "mock").
+    /// Returns the unique identifier name of the backend (e.g., "`TSMaster`", "mock").
     ///
     /// # Examples
     ///

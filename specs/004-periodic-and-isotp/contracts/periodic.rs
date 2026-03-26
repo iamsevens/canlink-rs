@@ -1,4 +1,4 @@
-//! Periodic Message Sending API Contract
+﻿//! Periodic Message Sending API Contract
 //!
 //! This file defines the public API contract for the periodic message sending feature.
 //! Implementation must conform to these signatures and behaviors.

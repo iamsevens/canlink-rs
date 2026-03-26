@@ -1,4 +1,4 @@
-//! ISO-TP (ISO 15765-2) API Contract
+﻿//! ISO-TP (ISO 15765-2) API Contract
 //!
 //! This file defines the public API contract for ISO-TP transport protocol support.
 //! Implementation must conform to these signatures and behaviors.

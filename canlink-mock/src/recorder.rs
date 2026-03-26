@@ -1,4 +1,4 @@
-//! Message recorder for tracking sent messages.
+﻿//! Message recorder for tracking sent messages.
 //!
 //! This module provides the `MessageRecorder` for recording all messages sent through
 //! the mock backend, enabling verification in tests.

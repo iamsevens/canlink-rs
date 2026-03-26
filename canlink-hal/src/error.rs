@@ -1,4 +1,4 @@
-//! Error types for the CAN hardware abstraction layer.
+﻿//! Error types for the CAN hardware abstraction layer.
 //!
 //! This module provides unified error types that are hardware-independent.
 //! All backends use these error types for consistent error handling.

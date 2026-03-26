@@ -1,4 +1,4 @@
-//! Periodic message sending module.
+﻿//! Periodic message sending module.
 //!
 //! This module provides functionality for sending CAN messages at fixed time intervals.
 //! It implements FR-001 to FR-006 from the 004 specification.

@@ -1,4 +1,4 @@
-//! Basic usage example for CANLink HAL with Mock backend.
+﻿//! Basic usage example for `CANLink` HAL with Mock backend.
 //!
 //! This example demonstrates:
 //! - Creating and initializing a Mock backend

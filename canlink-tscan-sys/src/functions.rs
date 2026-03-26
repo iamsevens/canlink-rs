@@ -1,4 +1,4 @@
-//! Low-level FFI function declarations for LibTSCAN
+﻿//! Low-level FFI function declarations for `LibTSCAN`
 //!
 //! This module contains the raw C function bindings.
 //! All functions use `extern "system"` which maps to `__stdcall` on Windows.
@@ -12,7 +12,7 @@ extern "system" {
     // Library Initialization
     // ========================================================================
 
-    /// Initialize the LibTSCAN library
+    /// Initialize the `LibTSCAN` library
     ///
     /// # Parameters
     /// - `AEnableFIFO`: Enable FIFO mode for message reception
@@ -20,22 +20,22 @@ extern "system" {
     /// - `AUseHWTime`: Use hardware timestamp
     ///
     /// # Safety
-    /// Must be called before any other LibTSCAN functions.
+    /// Must be called before any other `LibTSCAN` functions.
     /// Should only be called once per process.
     pub fn initialize_lib_tscan(AEnableFIFO: bool, AEnableErrorFrame: bool, AUseHWTime: bool);
 
-    /// Finalize the LibTSCAN library
+    /// Finalize the `LibTSCAN` library
     ///
     /// # Safety
-    /// Should be called when done using LibTSCAN.
-    /// No LibTSCAN functions should be called after this.
+    /// Should be called when done using `LibTSCAN`.
+    /// No `LibTSCAN` functions should be called after this.
     pub fn finalize_lib_tscan();
 
     // ========================================================================
     // Device Discovery and Connection
     // ========================================================================
 
-    /// Scan for available TSMaster devices
+    /// Scan for available `TSMaster` devices
     ///
     /// # Parameters
     /// - `ADeviceCount`: Output parameter for device count

@@ -1,4 +1,4 @@
-//! Bounded queue implementation (FR-011, FR-017)
+﻿//! Bounded queue implementation (FR-011, FR-017)
 //!
 //! Provides a bounded message queue with configurable overflow policies.
 

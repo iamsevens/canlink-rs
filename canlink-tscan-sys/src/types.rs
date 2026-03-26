@@ -1,22 +1,22 @@
-//! Low-level FFI type definitions for LibTSCAN
+﻿//! Low-level FFI type definitions for `LibTSCAN`
 //!
-//! This module contains the raw C types and structures used by LibTSCAN.
+//! This module contains the raw C types and structures used by `LibTSCAN`.
 
-/// Unsigned 8-bit integer used by LibTSCAN.
+/// Unsigned 8-bit integer used by `LibTSCAN`.
 pub type u8 = ::std::os::raw::c_uchar;
-/// Signed 8-bit integer used by LibTSCAN.
+/// Signed 8-bit integer used by `LibTSCAN`.
 pub type s8 = ::std::os::raw::c_char;
-/// Unsigned 16-bit integer used by LibTSCAN.
+/// Unsigned 16-bit integer used by `LibTSCAN`.
 pub type u16 = ::std::os::raw::c_ushort;
-/// Signed 16-bit integer used by LibTSCAN.
+/// Signed 16-bit integer used by `LibTSCAN`.
 pub type s16 = ::std::os::raw::c_short;
-/// Unsigned 32-bit integer used by LibTSCAN.
+/// Unsigned 32-bit integer used by `LibTSCAN`.
 pub type u32 = ::std::os::raw::c_uint;
-/// Signed 32-bit integer used by LibTSCAN.
+/// Signed 32-bit integer used by `LibTSCAN`.
 pub type s32 = ::std::os::raw::c_int;
-/// Unsigned 64-bit integer used by LibTSCAN.
+/// Unsigned 64-bit integer used by `LibTSCAN`.
 pub type u64 = ::std::os::raw::c_ulonglong;
-/// Signed 64-bit integer used by LibTSCAN.
+/// Signed 64-bit integer used by `LibTSCAN`.
 pub type s64 = ::std::os::raw::c_longlong;
 
 // Channel definitions
