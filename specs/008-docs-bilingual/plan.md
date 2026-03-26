@@ -32,6 +32,9 @@
 - [ ] **Step 3: 增加 Crate Map 表**
   - `canlink-hal` / `canlink-tscan-sys` / `canlink-tscan` / `canlink-cli`
   - 对照各 crate `Cargo.toml` 依赖核对顺序与关系
+  - 显式写清依赖关系：
+    - `canlink-tscan` 依赖 `canlink-hal` + `canlink-tscan-sys`
+    - `canlink-cli` 依赖 `canlink-hal` + `canlink-tscan`
 - [ ] **Step 4: 增加英文区块（内容与中文对应）**
 
 ### Task 3: 4 个 crate README 双语（英文优先）+ 关联包
@@ -49,6 +52,7 @@
 - [ ] **Step 3: 增加 Related Crates / 关联包**
   - README 使用 crates.io 链接
   - 顺序与根 README 的 Crate Map 一致
+  - 每个 crate 明确自身位置与依赖关系（与 Crate Map 对齐）
 - [ ] **Step 4: 补充中文区块（完整双语）**
 
 ### Task 4: docs.rs 文档（独立英文优先文档块）
@@ -72,7 +76,7 @@
 - [ ] **Step 1: 校验旧项目名消除**
 
 ```powershell
-rg -n "CANLink-RS" README.md canlink-*/README.md canlink-*/src/*.rs canlink-*/Cargo.toml -S
+rg -n -i "canlink[- ]?rs" README.md canlink-*/README.md canlink-*/src/*.rs canlink-*/Cargo.toml -S
 ```
 
 Expected: no matches.
