@@ -27,7 +27,7 @@
   - `canlink-hal/src/lib.rs`
   - `canlink-tscan-sys/src/lib.rs`
   - `canlink-tscan/src/lib.rs`
-  - `canlink-cli/src/lib.rs`
+  - `canlink-cli/src/main.rs`（bin crate 入口文档）
 - 4 个 crate `Cargo.toml` 的 `description` / `readme` 字段（crates.io 展示口径）
 
 ## 双语结构规则
@@ -37,6 +37,7 @@
 - 统一使用 ASCII 锚点，避免 GitHub / crates.io / docs.rs 锚点规则不一致：
   - 在中文段落前插入 `<a id="zh"></a>`
   - 在英文段落前插入 `<a id="en"></a>`
+- 语言切换行必须可见，且紧跟标题与锚点之后（保证用户一眼可见）
 - 根 README：中文段落在前、英文段落在后。
 - crate README 与 `lib.rs` 文档：英文段落在前、中文段落在后。
 - 全文统一使用 **CANLink** 作为项目名；“CANLink（Rust 实现）”仅在根 README 首段出现一次。
