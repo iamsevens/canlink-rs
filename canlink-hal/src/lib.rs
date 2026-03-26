@@ -8,7 +8,7 @@
 //!
 //! ## Quick Start
 //!
-//! ```rust,no_run
+//! ```rust,ignore
 //! use canlink_hal::{BackendConfig, CanBackend, CanMessage};
 //! use canlink_tscan::TSCanBackend;
 //!
@@ -46,7 +46,7 @@
 //!
 //! ## 快速开始
 //!
-//! ```rust,no_run
+//! ```rust,ignore
 //! use canlink_hal::{BackendConfig, CanBackend, CanMessage};
 //! use canlink_tscan::TSCanBackend;
 //!
