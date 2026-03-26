@@ -1,4 +1,12 @@
-# CANLink CLI
+﻿# CANLink CLI
+
+[![Crates.io](https://img.shields.io/crates/v/canlink-cli.svg)](https://crates.io/crates/canlink-cli)
+[![Documentation](https://docs.rs/canlink-cli/badge.svg)](https://docs.rs/canlink-cli)
+[![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](../LICENSE-MIT)
+
+<a id="en"></a>
+
+[English](#en) | [中文](#zh)
 
 Command-line interface for interacting with CAN hardware through the CANLink HAL.
 
@@ -19,7 +27,7 @@ Command-line interface for interacting with CAN hardware through the CANLink HAL
 cargo install --path canlink-cli
 ```
 
-### From Crates.io (when published)
+### From Crates.io
 
 ```bash
 cargo install canlink-cli
@@ -48,65 +56,7 @@ canlink send tscan 0 0x123 01 02 03 04
 canlink receive tscan 0 --count 5
 ```
 
-## Commands
-
-### List Available Backends
-
-```bash
-canlink list
-```
-
-### Query Backend Information
-
-```bash
-canlink info <backend>
-```
-
-Example:
-
-```bash
-canlink info tscan
-```
-
-### Send a CAN Message
-
-```bash
-canlink send <backend> <channel> <id> [data...]
-```
-
-Periodic mode:
-
-```bash
-canlink send tscan 0 0x123 01 02 03 04 --periodic 100 --count 10
-```
-
-### Receive CAN Messages
-
-```bash
-canlink receive <backend> <channel> [--count <n>]
-```
-
-### Validate Configuration File
-
-```bash
-canlink validate <config-file>
-```
-
-Example:
-
-```bash
-canlink validate canlink.toml
-```
-
-## JSON Output
-
-All commands support JSON output with the `--json` flag:
-
-```bash
-canlink --json info tscan
-```
-
-## Configuration File Format
+## Configuration File
 
 Create a `canlink.toml` file:
 
@@ -115,6 +65,14 @@ Create a `canlink.toml` file:
 backend_name = "tscan"
 retry_count = 3
 retry_interval_ms = 1000
+```
+
+## JSON Output
+
+All commands support JSON output with the `--json` flag:
+
+```bash
+canlink --json info tscan
 ```
 
 ## Exit Codes
@@ -129,35 +87,113 @@ retry_interval_ms = 1000
 - `8`: Timeout
 - `9`: No messages received
 
-## Troubleshooting
+## Related Crates
 
-### Backend Not Found
+- [canlink-hal](https://crates.io/crates/canlink-hal) - Core HAL
+- [canlink-tscan-sys](https://crates.io/crates/canlink-tscan-sys) - LibTSCAN FFI bindings
+- [canlink-tscan](https://crates.io/crates/canlink-tscan) - LibTSCAN backend
 
-```bash
-Error: Backend 'socketcan' not found
-```
+## Documentation
 
-**Solution**: Check available backends with `canlink list`
-
-### Invalid Data Format
-
-```bash
-Error: Invalid hex byte: 'GG'
-```
-
-**Solution**: Use valid hex bytes (00-FF)
-
-### Missing LibTSCAN Runtime
-
-If `tscan` initialization fails, ensure the LibTSCAN runtime is available and matches the installed DLL/Lib bundle.
-
-## Related Documentation
-
-- [CANLink HAL Documentation](../canlink-hal/README.md)
-- [TSMaster Backend Guide](../canlink-tscan/README.md)
-- [Examples](../examples/)
-- [API Documentation](https://docs.rs/canlink-cli)
+- [API docs](https://docs.rs/canlink-cli)
 
 ## License
+
+MIT OR Apache-2.0
+
+<a id="zh"></a>
+
+[中文](#zh) | [English](#en)
+
+CANLink HAL 的命令行工具，用于与 CAN 硬件交互。
+
+## 功能
+
+- 列出可用后端
+- 查询后端能力
+- 发送 CAN 消息（单次或周期）
+- 接收 CAN 消息
+- 校验配置文件
+- 人类可读与 JSON 输出
+
+## 安装
+
+### 从源码安装
+
+```bash
+cargo install --path canlink-cli
+```
+
+### 从 Crates.io 安装
+
+```bash
+cargo install canlink-cli
+```
+
+## 环境要求
+
+真实硬件模式需要：
+
+- Windows
+- LibTSCAN 运行库（完整安装 TSMaster 或独立 LibTSCAN 包）
+
+## 快速开始
+
+```bash
+# 列出可用后端
+canlink list
+
+# 查询后端能力
+canlink info tscan
+
+# 发送 CAN 消息
+canlink send tscan 0 0x123 01 02 03 04
+
+# 接收消息
+canlink receive tscan 0 --count 5
+```
+
+## 配置文件
+
+创建 `canlink.toml`：
+
+```toml
+[backend]
+backend_name = "tscan"
+retry_count = 3
+retry_interval_ms = 1000
+```
+
+## JSON 输出
+
+所有命令支持 `--json`：
+
+```bash
+canlink --json info tscan
+```
+
+## 退出码
+
+- `0`: 成功
+- `2`: 未找到后端
+- `3`: 后端错误
+- `4`: 配置错误
+- `5`: 参数无效
+- `6`: I/O 错误
+- `7`: 解析错误
+- `8`: 超时
+- `9`: 未收到消息
+
+## 相关包
+
+- [canlink-hal](https://crates.io/crates/canlink-hal) - 核心 HAL
+- [canlink-tscan-sys](https://crates.io/crates/canlink-tscan-sys) - LibTSCAN FFI 绑定
+- [canlink-tscan](https://crates.io/crates/canlink-tscan) - LibTSCAN 后端
+
+## 文档
+
+- [API 文档](https://docs.rs/canlink-cli)
+
+## 许可证
 
 MIT OR Apache-2.0

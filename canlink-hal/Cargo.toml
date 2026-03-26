@@ -7,6 +7,7 @@ authors.workspace = true
 license.workspace = true
 repository.workspace = true
 description = "Hardware abstraction layer for CAN bus interfaces"
+readme = "README.md"
 keywords = ["can", "canfd", "automotive", "embedded", "hal"]
 categories = ["embedded", "hardware-support", "api-bindings"]
 

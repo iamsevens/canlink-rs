@@ -64,7 +64,10 @@
 - README 与 `lib.rs` 提供完整双语（不做缩略版），避免信息不对称。
 - docs.rs / crates.io 的默认展示页以英文区块为首。
 - `Cargo.toml` 的 `description` 使用英文。
-- README 与 `lib.rs` 的双语内容需保持一致（可通过 `#![doc = include_str!("../README.md")]` 复用 README 作为单一事实源，避免漂移）。
+- README 与 `lib.rs` 的双语内容需保持一致，但链接按平台规则调整：
+  - README 使用 crates.io 链接
+  - `lib.rs` 使用 docs.rs 链接
+- 不使用 `#![doc = include_str!("../README.md")]` 直接复用 README（会导致链接平台不一致）。
 
 ## 验收标准
 - 根 README 顶部默认中文，并可点击切换英文。
@@ -86,8 +89,7 @@
 - 修改 4 个 crate `src/lib.rs` 顶部文档：
   - 英文优先 + 双语锚点
   - 添加 Related Crates
-  - 可选：用 `include_str!("../README.md")` 复用 README
 - 修改 4 个 crate `Cargo.toml`：
   - `description` 统一英文
-  - 必要时补充 `readme = "README.md"`
+  - 必须补充 `readme = "README.md"`
 

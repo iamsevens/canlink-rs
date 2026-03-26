@@ -1,15 +1,70 @@
-//! # CANLink CLI
+﻿//! # CANLink CLI
+//! <a id="en"></a>
+//! [English](#en) | [中文](#zh)
 //!
-//! Command-line interface for the CAN hardware abstraction layer.
+//! Command-line interface for interacting with CAN hardware through the CANLink HAL.
 //!
-//! This tool provides commands for:
-//! - Listing available backends
-//! - Querying backend capabilities
-//! - Sending and receiving CAN messages
-//! - Periodic message sending (send --periodic)
-//! - Validating configuration files
-
-#![deny(missing_docs)]
+//! ## Features
+//!
+//! - List available backends
+//! - Query backend capabilities
+//! - Send and receive CAN messages
+//! - Periodic sending
+//! - Configuration validation
+//! - Human-readable and JSON output
+//!
+//! ## Quick Start
+//!
+//! ```text
+//! canlink list
+//! canlink info tscan
+//! canlink send tscan 0 0x123 01 02 03 04
+//! canlink receive tscan 0 --count 5
+//! ```
+//!
+//! ## Requirements
+//!
+//! Real hardware usage requires Windows and the LibTSCAN runtime.
+//!
+//! ## Related Crates
+//!
+//! - [`canlink-hal`](https://docs.rs/canlink-hal) - Core HAL
+//! - [`canlink-tscan-sys`](https://docs.rs/canlink-tscan-sys) - LibTSCAN FFI bindings
+//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - LibTSCAN backend
+//!
+//! <a id="zh"></a>
+//! [中文](#zh) | [English](#en)
+//!
+//! CANLink HAL 的命令行工具，用于与 CAN 硬件交互。
+//!
+//! ## 功能
+//!
+//! - 列出可用后端
+//! - 查询后端能力
+//! - 发送与接收 CAN 消息
+//! - 周期发送
+//! - 配置校验
+//! - 人类可读与 JSON 输出
+//!
+//! ## 快速开始
+//!
+//! ```text
+//! canlink list
+//! canlink info tscan
+//! canlink send tscan 0 0x123 01 02 03 04
+//! canlink receive tscan 0 --count 5
+//! ```
+//!
+//! ## 环境要求
+//!
+//! 真实硬件模式需要 Windows 与 LibTSCAN 运行库。
+//!
+//! ## 相关包
+//!
+//! - [`canlink-hal`](https://docs.rs/canlink-hal) - 核心 HAL
+//! - [`canlink-tscan-sys`](https://docs.rs/canlink-tscan-sys) - LibTSCAN FFI 绑定
+//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - LibTSCAN 后端
+//!#![deny(missing_docs)]
 
 mod commands;
 mod error;
@@ -151,3 +206,4 @@ fn main() {
         }
     }
 }
+

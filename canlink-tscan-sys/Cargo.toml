@@ -7,6 +7,7 @@ authors.workspace = true
 license.workspace = true
 repository.workspace = true
 description = "Low-level Rust FFI bindings to LibTSCAN for CAN hardware access"
+readme = "README.md"
 keywords = ["can", "canbus", "tsmaster", "ffi"]
 categories = ["external-ffi-bindings", "hardware-support"]
 
