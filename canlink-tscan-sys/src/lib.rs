@@ -1,8 +1,8 @@
-//! # CANLink TSCan Sys
+//! # `CANLink` TSCan Sys
 //! <a id="en"></a>
 //! [English](#en) | [中文](#zh)
 //!
-//! Low-level, unsafe Rust FFI bindings to the LibTSCAN C API.
+//! Low-level, unsafe Rust FFI bindings to the `LibTSCAN` C API.
 //!
 //! ## Warning
 //!
@@ -11,7 +11,7 @@
 //!
 //! ## Platform
 //!
-//! Windows 10/11 x64 is validated. LibTSCAN runtime (`libTSCAN.dll` +
+//! Windows 10/11 x64 is validated. `LibTSCAN` runtime (`libTSCAN.dll` +
 //! `libTSCAN.lib`) is required and is not distributed by this project.
 //!
 //! ## Basic Usage
@@ -39,13 +39,13 @@
 //! ## Related Crates
 //!
 //! - [`canlink-hal`](https://docs.rs/canlink-hal) - HAL abstraction
-//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - Safe LibTSCAN backend
+//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - Safe `LibTSCAN` backend
 //! - [`canlink-cli`](https://docs.rs/canlink-cli) - CLI tool
 //!
 //! <a id="zh"></a>
 //! [中文](#zh) | [English](#en)
 //!
-//! CANLink TSCan Sys 提供 LibTSCAN C API 的底层 Rust FFI 绑定（不安全接口）。
+//! `CANLink` TSCan Sys 提供 `LibTSCAN` C API 的底层 Rust FFI 绑定（不安全接口）。
 //!
 //! ## 警告
 //!
@@ -53,7 +53,7 @@
 //!
 //! ## 平台
 //!
-//! 当前仅在 Windows 10/11 x64 环境验证。需要 LibTSCAN 运行库
+//! 当前仅在 Windows 10/11 x64 环境验证。需要 `LibTSCAN` 运行库
 //! （`libTSCAN.dll` + `libTSCAN.lib`），且本项目不分发该运行库。
 //!
 //! ## 基础用法
@@ -81,9 +81,10 @@
 //! ## 相关包
 //!
 //! - [`canlink-hal`](https://docs.rs/canlink-hal) - HAL 抽象层
-//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - 安全的 LibTSCAN 后端
+//! - [`canlink-tscan`](https://docs.rs/canlink-tscan) - 安全的 `LibTSCAN` 后端
 //! - [`canlink-cli`](https://docs.rs/canlink-cli) - 命令行工具
-//!#![cfg(windows)]
+//!
+#![cfg(windows)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![deny(missing_docs)]
