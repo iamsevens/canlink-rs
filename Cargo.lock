@@ -257,7 +257,7 @@ checksum = "b35204fbdc0b3f4446b89fc1ac2cf84a8a68971995d0bf2e925ec7cd960f9cb3"
 
 [[package]]
 name = "canlink-cli"
-version = "0.3.2"
+version = "0.3.3"
 dependencies = [
  "assert_cmd",
  "canlink-hal",
@@ -275,7 +275,7 @@ dependencies = [
 
 [[package]]
 name = "canlink-hal"
-version = "0.3.2"
+version = "0.3.3"
 dependencies = [
  "async-std",
  "bitflags 2.10.0",
@@ -294,7 +294,7 @@ dependencies = [
 
 [[package]]
 name = "canlink-mock"
-version = "0.3.2"
+version = "0.3.3"
 dependencies = [
  "async-std",
  "canlink-hal",
@@ -308,7 +308,7 @@ dependencies = [
 
 [[package]]
 name = "canlink-tscan"
-version = "0.3.2"
+version = "0.3.3"
 dependencies = [
  "canlink-hal",
  "canlink-tscan-sys",
@@ -321,7 +321,7 @@ dependencies = [
 
 [[package]]
 name = "canlink-tscan-sys"
-version = "0.3.2"
+version = "0.3.3"
 dependencies = [
  "winapi",
 ]

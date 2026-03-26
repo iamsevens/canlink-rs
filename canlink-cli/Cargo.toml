@@ -11,6 +11,10 @@ readme = "README.md"
 keywords = ["can", "canfd", "cli", "automotive"]
 categories = ["command-line-utilities", "embedded"]
 
+[package.metadata.docs.rs]
+default-target = "x86_64-pc-windows-msvc"
+targets = ["x86_64-pc-windows-msvc"]
+
 [[bin]]
 name = "canlink"
 path = "src/main.rs"

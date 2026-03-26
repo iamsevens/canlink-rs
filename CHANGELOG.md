@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-03-26
+
+### Fixed
+
+#### docs.rs Build Target for `canlink-cli`
+- Added `package.metadata.docs.rs` in `canlink-cli/Cargo.toml` to force Windows docs target.
+- Fixed docs.rs dependency resolution failure where Linux target could not resolve Windows-only `canlink-tscan-sys` symbols.
+
 ## [0.3.2] - 2026-03-26
 
 ### Fixed
