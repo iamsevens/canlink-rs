@@ -1,4 +1,4 @@
-//! # CANLink HAL
+//! # `CANLink` HAL
 //! <a id="en"></a>
 //! [English](#en) | [中文](#zh)
 //!
