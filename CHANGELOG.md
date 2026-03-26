@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-03-26
+
+### Fixed
+
+#### docs.rs Build for `canlink-cli`
+- Added `canlink-cli` library target (`src/lib.rs`) so docs.rs can build rustdoc pages.
+- Resolved docs.rs failure: `error: no library targets found in package canlink-cli`.
+
 ## [0.3.1] - 2026-03-26
 
 ### Changed
