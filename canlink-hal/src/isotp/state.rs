@@ -69,12 +69,13 @@ impl RxState {
                 expected_length,
                 ..
             } => {
-                if *expected_length == 0 {
-                    Some(0)
-                } else {
-                    let progress = (buffer.len() * 100 / *expected_length).min(100);
-                    Some(u8::try_from(progress).unwrap_or(100))
-                }
+                let progress = buffer
+                    .len()
+                    .saturating_mul(100)
+                    .checked_div(*expected_length)
+                    .unwrap_or(0)
+                    .min(100);
+                Some(u8::try_from(progress).unwrap_or(100))
             }
         }
     }
