@@ -375,8 +375,8 @@ mod tests {
         assert!(!config.rx_extended);
         assert_eq!(config.block_size, 0);
         assert_eq!(config.st_min, StMin::Milliseconds(10));
-        assert_eq!(config.rx_timeout, Duration::from_millis(1000));
-        assert_eq!(config.tx_timeout, Duration::from_millis(1000));
+        assert_eq!(config.rx_timeout, Duration::from_secs(1));
+        assert_eq!(config.tx_timeout, Duration::from_secs(1));
         assert_eq!(config.max_wait_count, 10);
         assert_eq!(config.addressing_mode, AddressingMode::Normal);
         assert_eq!(config.max_buffer_size, 4095);

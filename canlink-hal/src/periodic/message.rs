@@ -206,7 +206,7 @@ mod tests {
     #[test]
     fn test_interval_validation_valid_max() {
         let msg = create_test_message();
-        let result = PeriodicMessage::new(msg, Duration::from_millis(10_000));
+        let result = PeriodicMessage::new(msg, Duration::from_secs(10));
         assert!(result.is_ok());
     }
 
