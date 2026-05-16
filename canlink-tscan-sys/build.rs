@@ -94,6 +94,12 @@ Set {BUNDLE_ENV} for full linking."
 #[cfg(windows)]
 fn bundle_candidates(workspace_root: &Path) -> Vec<PathBuf> {
     let mut candidates = Vec::new();
+    let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap_or_else(|_| "x86_64".to_string());
+    let arch_dir = if target_arch.eq_ignore_ascii_case("x86") {
+        "x86"
+    } else {
+        "x64"
+    };
 
     if let Ok(dir) = env::var(BUNDLE_ENV) {
         if !dir.trim().is_empty() {
@@ -101,10 +107,21 @@ fn bundle_candidates(workspace_root: &Path) -> Vec<PathBuf> {
         }
     }
 
+    // Preferred local dev layout in this workspace:
+    // libs/tsmaster/windows/<arch>
+    candidates.push(
+        workspace_root
+            .join("libs")
+            .join("tsmaster")
+            .join("windows")
+            .join(arch_dir),
+    );
+
     if let Ok(home) = env::var(TSMASTER_HOME_ENV) {
         if !home.trim().is_empty() {
             let home = PathBuf::from(home);
             candidates.push(home.join("bin").join("x64"));
+            candidates.push(home.join("bin").join("x86"));
             candidates.push(home.join("bin"));
         }
     }
@@ -112,23 +129,9 @@ fn bundle_candidates(workspace_root: &Path) -> Vec<PathBuf> {
     if let Ok(program_files) = env::var("ProgramFiles") {
         let tsmaster = PathBuf::from(program_files).join("TSMaster");
         candidates.push(tsmaster.join("bin").join("x64"));
+        candidates.push(tsmaster.join("bin").join("x86"));
         candidates.push(tsmaster.join("bin"));
     }
-
-    candidates.push(workspace_root.join("libs"));
-    candidates.push(
-        workspace_root
-            .join("docs")
-            .join("vendor")
-            .join("tsmaster")
-            .join("examples")
-            .join("LibTSCAN")
-            .join("lib_extracted")
-            .join("lib")
-            .join("lib")
-            .join("windows")
-            .join("x64"),
-    );
     candidates
 }
 
