@@ -74,8 +74,10 @@ Set {BUNDLE_ENV} for full linking."
             // Tell cargo to link to libTSCAN.dll
             println!("cargo:rustc-link-lib=dylib=libTSCAN");
 
-            // Copy runtime DLL bundle next to output binaries to prevent mismatched PATH DLL loading.
-            let output_root = workspace_root.join("target").join(profile);
+            // OUT_DIR points into the downstream Cargo target directory even when
+            // this crate is built from the registry cache.
+            let output_root =
+                profile_output_dir().unwrap_or_else(|| workspace_root.join("target").join(profile));
             copy_runtime_bundle(&selected_bundle, &output_root);
             copy_runtime_bundle(&selected_bundle, &output_root.join("deps"));
             copy_runtime_bundle(&selected_bundle, &output_root.join("examples"));
@@ -89,6 +91,14 @@ Set {BUNDLE_ENV} for full linking."
             "cargo:warning=canlink-tscan-sys: non-Windows target detected; skipping LibTSCAN bundle checks"
         );
     }
+}
+
+#[cfg(windows)]
+fn profile_output_dir() -> Option<PathBuf> {
+    let out_dir = PathBuf::from(env::var("OUT_DIR").ok()?);
+    let package_build_dir = out_dir.parent()?;
+    let build_dir = package_build_dir.parent()?;
+    build_dir.parent().map(Path::to_path_buf)
 }
 
 #[cfg(windows)]
