@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-06-02
+
+### Fixed
+
+#### Runtime DLL Copy for Registry Dependencies
+- Fixed `canlink-tscan-sys` runtime DLL copy target when the crate is built from the Cargo registry cache.
+- Runtime LibTSCAN DLLs are now copied into the downstream Cargo target profile directory (`target/<profile>`) plus `deps` and `examples`.
+- Prevents `libTSCAN.dll` from being copied into registry-cache-local target directories where downstream executables cannot load it.
+
+### Changed
+
+#### Internal Dependency Requirements
+- Updated internal crate dependency requirements to `0.3.4` so downstream updates resolve the fixed `canlink-tscan-sys` crate.
+
+
 ## [0.3.3] - 2026-03-26
 
 ### Fixed
