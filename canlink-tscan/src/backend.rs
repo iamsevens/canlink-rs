@@ -1,4 +1,4 @@
-﻿//! `LibTSCAN` CAN backend implementation.
+//! `LibTSCAN` CAN backend implementation.
 
 use canlink_hal::{
     BackendConfig, BackendFactory, BackendVersion, CanBackend, CanError, CanId, CanMessage,
@@ -14,12 +14,16 @@ use canlink_tscan_sys::{
 use std::ffi::CStr;
 use std::os::raw::c_char;
 use std::ptr;
+use std::thread;
+use std::time::Duration;
 
 use crate::config::TscanDaemonConfig;
 use crate::convert::{from_tlibcan, from_tlibcanfd, to_tlibcan, to_tlibcanfd};
 use crate::daemon::client::{DaemonClient, InitParams};
 use crate::daemon::{CanFdFrame, CanFrame, ConnectResult, Op, RecvCanResult, RecvCanfdResult};
-use crate::error::check_error;
+use crate::error::{check_error, format_libtscan_error, is_recoverable_connect_error};
+
+const CONNECT_RECOVERY_DELAY_MS: u64 = 200;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum BackendState {
@@ -117,7 +121,35 @@ impl TSCanBackend {
                 });
             };
 
-            check_error(tscan_connect(serial_cstr.as_ptr(), &mut self.device_handle))?;
+            let rc = tscan_connect(serial_cstr.as_ptr(), &mut self.device_handle);
+            if rc != 0 {
+                if is_recoverable_connect_error(rc) {
+                    finalize_lib_tscan();
+                    thread::sleep(Duration::from_millis(CONNECT_RECOVERY_DELAY_MS));
+                    initialize_lib_tscan(true, false, true);
+
+                    let mut retry_device_count: u32 = 0;
+                    check_error(tscan_scan_devices(&mut retry_device_count))?;
+                    if retry_device_count == 0 {
+                        return Err(CanError::DeviceNotFound {
+                            device: "No TSMaster devices found after connect recovery".to_string(),
+                        });
+                    }
+
+                    self.device_handle = 0;
+                    let retry_rc = tscan_connect(serial_cstr.as_ptr(), &mut self.device_handle);
+                    if retry_rc != 0 {
+                        return Err(CanError::InitializationFailed {
+                            reason: format!(
+                                "{} after direct connect recovery",
+                                format_libtscan_error("tscan_connect", retry_rc)
+                            ),
+                        });
+                    }
+                } else {
+                    check_error(rc)?;
+                }
+            }
 
             let mut channel_count: s32 = 0;
             let mut is_canfd_supported: bool = false;

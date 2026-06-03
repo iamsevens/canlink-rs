@@ -284,3 +284,47 @@ fn first_connect_is_retryable_after_daemon_restart() {
         "expected daemon handle cached after successful retry"
     );
 }
+
+#[test]
+fn first_connect_lib_error_2_restarts_daemon_and_retries() {
+    let _guard = ENV_LOCK
+        .get_or_init(|| Mutex::new(()))
+        .lock()
+        .unwrap_or_else(|err| err.into_inner());
+
+    let trace_path = unique_trace_file();
+    std::env::set_var("TRACE_PATH", &trace_path);
+    std::env::set_var("LIB_ERROR_ON_OP_ONCE", "CONNECT");
+    std::env::set_var("LIB_ERROR_CODE", "2");
+    std::env::remove_var("EXIT_ON_OP_ONCE");
+    std::env::remove_var("HANG_ON_OP");
+    std::env::remove_var("PROTOCOL_VERSION");
+
+    let mut client = DaemonClient::connect(&base_config(), InitParams::default())
+        .expect("client connect failed");
+    let result = client.request_auto(Op::Connect {
+        serial: String::new(),
+    });
+
+    std::env::remove_var("TRACE_PATH");
+    std::env::remove_var("LIB_ERROR_ON_OP_ONCE");
+    std::env::remove_var("LIB_ERROR_CODE");
+
+    let response = result.expect("expected CONNECT error 2 retry after daemon restart");
+    assert!(response.is_ok());
+    assert!(
+        client.cache().handle.is_some(),
+        "expected daemon handle cached after successful retry"
+    );
+
+    let trace = std::fs::read_to_string(trace_path).expect("read trace file failed");
+    assert!(
+        trace.lines().any(|line| line == "LIB_ERRORED:CONNECT"),
+        "expected injected connect lib error, trace was:\n{trace}"
+    );
+    let hello_count = trace.lines().filter(|line| *line == "HELLO").count();
+    assert!(
+        hello_count >= 2,
+        "expected daemon restart after connect error 2, got {hello_count} HELLO entries"
+    );
+}

@@ -3,6 +3,7 @@ use super::protocol::{
     is_idempotent_op, ConnectResult, ErrorCode, HelloAck, Op, Request, Response, Status,
 };
 use crate::config::TscanDaemonConfig;
+use crate::error::is_recoverable_connect_error;
 use canlink_hal::{CanError, CanResult};
 use std::collections::{HashMap, HashSet};
 use std::io;
@@ -106,6 +107,9 @@ impl DaemonClient {
         }
         match self.send_request_once(&request, timeout) {
             Ok(response) => {
+                if is_recoverable_connect_response(&op, &response, &self.cache) {
+                    return self.handle_recoverable_response_error(request, op, response, timeout);
+                }
                 let response = ensure_response_ok(response)?;
                 self.update_cache_for_success(&op, &response)?;
                 Ok(response)
@@ -196,6 +200,32 @@ impl DaemonClient {
                 reason: format!(
                     "daemon recovered after {}, but '{}' is non-idempotent",
                     failure.describe(),
+                    op_name(&op)
+                ),
+            });
+        }
+
+        let retry = self
+            .send_request_once(&request, timeout)
+            .map_err(|err| err.to_can_error(timeout, "retry"))?;
+        let retry = ensure_response_ok(retry)?;
+        self.update_cache_for_success(&op, &retry)?;
+        Ok(retry)
+    }
+
+    fn handle_recoverable_response_error(
+        &mut self,
+        request: Request,
+        op: Op,
+        response: Response,
+        timeout: Duration,
+    ) -> CanResult<Response> {
+        self.restart_and_recover()?;
+        if !is_retryable_after_recover(&op, &self.cache) {
+            return Err(CanError::InitializationFailed {
+                reason: format!(
+                    "daemon recovered after '{}', but '{}' is non-idempotent",
+                    response.message,
                     op_name(&op)
                 ),
             });
@@ -586,6 +616,32 @@ fn is_retryable_after_recover(op: &Op, cache: &BackendStateCache) -> bool {
     }
     // First CONNECT before we hold a handle can be safely retried after daemon restart.
     matches!(op, Op::Connect { .. }) && cache.handle.is_none()
+}
+
+fn is_recoverable_connect_response(
+    op: &Op,
+    response: &Response,
+    cache: &BackendStateCache,
+) -> bool {
+    if !matches!(op, Op::Connect { .. }) || cache.handle.is_some() {
+        return false;
+    }
+    if response.status != Status::Error || response.code != ErrorCode::LibTscanError as u32 {
+        return false;
+    }
+    extract_libtscan_error_code(&response.message).is_some_and(is_recoverable_connect_error)
+}
+
+fn extract_libtscan_error_code(message: &str) -> Option<u32> {
+    let (_, tail) = message.split_once("failed:")?;
+    let digits = tail
+        .trim_start()
+        .split(|ch: char| !ch.is_ascii_digit())
+        .next()?;
+    if digits.is_empty() {
+        return None;
+    }
+    digits.parse().ok()
 }
 
 fn op_name(op: &Op) -> &'static str {

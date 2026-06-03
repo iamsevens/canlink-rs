@@ -3,6 +3,7 @@ use super::protocol::{
     CanFdFrame, CanFrame, CapabilityResult, ConnectResult, DeviceInfo, ErrorCode, HelloAck, Op,
     RecvCanResult, RecvCanfdResult, Request, Response, ScanResult,
 };
+use crate::error::{format_libtscan_error, is_recoverable_connect_error};
 use canlink_hal::CanMessage;
 use canlink_tscan_sys::{
     finalize_lib_tscan, initialize_lib_tscan, tscan_config_can_by_baudrate,
@@ -21,12 +22,31 @@ use std::thread;
 use std::time::Duration;
 
 const PROTOCOL_VERSION: u32 = 1;
+const CONNECT_RECOVERY_DELAY_MS: u64 = 200;
 
 #[derive(Debug, Default)]
 struct ServerState {
     initialized: bool,
+    init: ServerInitParams,
     delayed_once_ops: HashSet<String>,
     exited_once_ops: HashSet<String>,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct ServerInitParams {
+    enable_fifo: bool,
+    enable_error_frame: bool,
+    use_hw_time: bool,
+}
+
+impl Default for ServerInitParams {
+    fn default() -> Self {
+        Self {
+            enable_fifo: true,
+            enable_error_frame: false,
+            use_hw_time: true,
+        }
+    }
 }
 
 pub fn run_server() -> io::Result<()> {
@@ -158,6 +178,11 @@ fn handle_request(state: &mut ServerState, request: Request) -> Response {
         } => unsafe {
             initialize_lib_tscan(enable_fifo, enable_error_frame, use_hw_time);
             state.initialized = true;
+            state.init = ServerInitParams {
+                enable_fifo,
+                enable_error_frame,
+                use_hw_time,
+            };
             Response::ok_empty(id)
         },
         Op::Scan => {
@@ -209,20 +234,64 @@ fn handle_request(state: &mut ServerState, request: Request) -> Response {
                 serial
             };
 
-            let mut handle = 0usize;
-            let rc = unsafe {
-                let serial_c = match CString::new(resolved_serial.as_str()) {
-                    Ok(v) => v,
-                    Err(err) => {
-                        return Response::error(
-                            id,
-                            ErrorCode::InvalidParams as u32,
-                            format!("invalid serial: {err}"),
-                        );
-                    }
-                };
-                tscan_connect(serial_c.as_ptr(), &mut handle)
+            let serial_c = match CString::new(resolved_serial.as_str()) {
+                Ok(v) => v,
+                Err(err) => {
+                    return Response::error(
+                        id,
+                        ErrorCode::InvalidParams as u32,
+                        format!("invalid serial: {err}"),
+                    );
+                }
             };
+
+            let mut handle = 0usize;
+            let mut rc = unsafe { tscan_connect(serial_c.as_ptr(), &mut handle) };
+            if rc != 0 && is_recoverable_connect_error(rc) {
+                let _ = append_trace(format!("CONNECT_RECOVERY_START:{rc}"));
+                let disconnect_rc = unsafe { tscan_disconnect_all_devices() };
+                let _ = append_trace(format!("CONNECT_RECOVERY_DISCONNECT_ALL:{disconnect_rc}"));
+
+                if state.initialized {
+                    unsafe {
+                        finalize_lib_tscan();
+                    }
+                    state.initialized = false;
+                }
+                thread::sleep(Duration::from_millis(CONNECT_RECOVERY_DELAY_MS));
+                unsafe {
+                    initialize_lib_tscan(
+                        state.init.enable_fifo,
+                        state.init.enable_error_frame,
+                        state.init.use_hw_time,
+                    );
+                }
+                state.initialized = true;
+
+                let mut retry_device_count = 0u32;
+                let scan_rc = unsafe { tscan_scan_devices(&mut retry_device_count) };
+                if scan_rc != 0 {
+                    return lib_error(id, "tscan_scan_devices", scan_rc);
+                }
+                if retry_device_count == 0 {
+                    return Response::error(
+                        id,
+                        ErrorCode::NoDevice as u32,
+                        "no device detected by tscan_scan_devices after connect recovery",
+                    );
+                }
+
+                handle = 0;
+                rc = unsafe { tscan_connect(serial_c.as_ptr(), &mut handle) };
+                if rc != 0 {
+                    return lib_error_with_context(
+                        id,
+                        "tscan_connect",
+                        rc,
+                        "after connect recovery",
+                    );
+                }
+            }
             if rc != 0 {
                 return lib_error(id, "tscan_connect", rc);
             }
@@ -508,11 +577,16 @@ fn cstr_or_empty(ptr: *const c_char) -> String {
 }
 
 fn lib_error(id: u64, op: &str, code: u32) -> Response {
-    Response::error(
-        id,
-        ErrorCode::LibTscanError as u32,
-        format!("{op} failed: {code}"),
-    )
+    lib_error_with_context(id, op, code, "")
+}
+
+fn lib_error_with_context(id: u64, op: &str, code: u32, context: &str) -> Response {
+    let mut message = format_libtscan_error(op, code);
+    if !context.is_empty() {
+        message.push_str("; ");
+        message.push_str(context);
+    }
+    Response::error(id, ErrorCode::LibTscanError as u32, message)
 }
 
 fn to_controller_type(value: u8) -> TLIBCANFDControllerType {

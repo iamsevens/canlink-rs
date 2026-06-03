@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+#### LibTSCAN Connect Recovery and Diagnostics
+- Added recovery for `tscan_connect` returning LibTSCAN error code `2` (`Connect failed`) after device enumeration succeeds.
+- Direct backend now performs one bounded `finalize_lib_tscan` / `initialize_lib_tscan` / rescan / reconnect attempt for connect error `2`.
+- Daemon backend now attempts in-daemon cleanup and reconnect for connect error `2`; if the vendor cleanup call hangs, the existing request timeout path restarts the daemon and retries the first connect.
+- Daemon client now treats first-connect LibTSCAN error `2` as recoverable and restarts the daemon before retrying.
+- Improved `basic_hardware_test` error output to include LibTSCAN error descriptions, not only numeric codes.
+
 ## [0.3.4] - 2026-06-02
 
 ### Fixed

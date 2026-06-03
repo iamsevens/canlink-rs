@@ -18,6 +18,22 @@ use canlink_tscan_sys::*;
 use std::ffi::CStr;
 use std::ptr;
 
+fn describe_error(code: u32) -> String {
+    unsafe {
+        let mut desc: *const i8 = ptr::null();
+        let rc = tscan_get_error_description(code, &mut desc);
+        if rc == 0 && !desc.is_null() {
+            CStr::from_ptr(desc).to_string_lossy().into_owned()
+        } else {
+            format!("unknown error code {code}")
+        }
+    }
+}
+
+fn print_error(prefix: &str, code: u32) {
+    println!("   {prefix} (error code: {code}, {})", describe_error(code));
+}
+
 fn main() {
     println!("🔍 LibTSCAN Hardware Connection Test\n");
     println!("=====================================\n");
@@ -34,7 +50,7 @@ fn main() {
         let result = tscan_scan_devices(&mut device_count);
 
         if result != 0 {
-            println!("   ❌ Failed to scan devices (error code: {})", result);
+            print_error("❌ Failed to scan devices", result);
             finalize_lib_tscan();
             return;
         }
@@ -86,7 +102,7 @@ fn main() {
         let result = tscan_connect(ptr::null(), &mut handle);
 
         if result != 0 {
-            println!("   ❌ Failed to connect (error code: {})", result);
+            print_error("❌ Failed to connect", result);
             finalize_lib_tscan();
             return;
         }
@@ -104,10 +120,7 @@ fn main() {
             println!("   CAN Channels: {}", channel_count);
             println!("   CAN-FD Support: {}", if is_canfd { "Yes" } else { "No" });
         } else {
-            println!(
-                "   ⚠️  Failed to query capabilities (error code: {})",
-                result
-            );
+            print_error("⚠️  Failed to query capabilities", result);
         }
 
         let mut device_type: i32 = 0;
@@ -129,7 +142,7 @@ fn main() {
         let result = tscan_config_can_by_baudrate(handle, CHN1, 500.0, 1); // 500 kbps, 120Ω on
 
         if result != 0 {
-            println!("   ❌ Failed to configure channel (error code: {})", result);
+            print_error("❌ Failed to configure channel", result);
         } else {
             println!("   ✓ Channel configured\n");
         }
@@ -149,7 +162,7 @@ fn main() {
         let result = tscan_transmit_can_async(handle, &msg);
 
         if result != 0 {
-            println!("   ❌ Failed to send message (error code: {})", result);
+            print_error("❌ Failed to send message", result);
         } else {
             // Copy fields to avoid unaligned reference
             let id = msg.FIdentifier;

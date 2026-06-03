@@ -7,6 +7,8 @@ use canlink_tscan_sys::tscan_get_error_description;
 use std::ffi::CStr;
 use std::os::raw::c_char;
 
+pub(crate) const TSCAN_ERR_CONNECT_FAILED: u32 = 2;
+
 /// Convert `LibTSCAN` error code to CanError.
 ///
 /// # Arguments
@@ -49,6 +51,17 @@ fn convert_error(code: u32) -> CanError {
 
     // Map common error codes to specific CanError variants
     match code {
+        // LibTSCAN base connection errors.
+        TSCAN_ERR_CONNECT_FAILED => CanError::InitializationFailed {
+            reason: format_libtscan_error_message("tscan_connect", code, &description),
+        },
+        3 => CanError::DeviceNotFound {
+            device: format_libtscan_error_message("tscan_connect", code, &description),
+        },
+        5 | 15 => CanError::InitializationFailed {
+            reason: format_libtscan_error_message("tscan_connect", code, &description),
+        },
+
         // Device/Connection errors (1xxx range in LibTSCAN)
         1001 => CanError::DeviceNotFound {
             device: description,
@@ -91,9 +104,22 @@ fn convert_error(code: u32) -> CanError {
 
         // All other errors
         _ => CanError::Other {
-            message: format!("LibTSCAN error {}: {}", code, description),
+            message: format_libtscan_error_message("LibTSCAN", code, &description),
         },
     }
+}
+
+pub(crate) fn is_recoverable_connect_error(code: u32) -> bool {
+    code == TSCAN_ERR_CONNECT_FAILED
+}
+
+pub(crate) fn format_libtscan_error(op: &str, code: u32) -> String {
+    let description = get_error_description(code);
+    format_libtscan_error_message(op, code, &description)
+}
+
+fn format_libtscan_error_message(op: &str, code: u32, description: &str) -> String {
+    format!("{op} failed: {code} ({description})")
 }
 
 /// Get error description from `LibTSCAN`.
@@ -138,6 +164,19 @@ mod tests {
     fn test_convert_error_device_not_found() {
         let err = convert_error(1001);
         assert!(matches!(err, CanError::DeviceNotFound { .. }));
+    }
+
+    #[test]
+    fn test_convert_error_connect_failed() {
+        let err = convert_error(2);
+        assert!(matches!(err, CanError::InitializationFailed { .. }));
+        assert!(err.to_string().contains("Connect failed"));
+    }
+
+    #[test]
+    fn test_recoverable_connect_error_code() {
+        assert!(is_recoverable_connect_error(2));
+        assert!(!is_recoverable_connect_error(3));
     }
 
     #[test]

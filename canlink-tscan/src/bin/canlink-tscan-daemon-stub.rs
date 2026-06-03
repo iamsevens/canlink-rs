@@ -1,6 +1,6 @@
 use canlink_tscan::daemon::{
-    read_frame, write_frame, CapabilityResult, ConnectResult, DeviceInfo, HelloAck, Op, Request,
-    Response, ScanResult,
+    read_frame, write_frame, CapabilityResult, ConnectResult, DeviceInfo, ErrorCode, HelloAck, Op,
+    Request, Response, ScanResult,
 };
 use std::env;
 use std::fs::OpenOptions;
@@ -15,6 +15,11 @@ fn main() -> io::Result<()> {
         .unwrap_or(1);
     let hang_on = env::var("HANG_ON_OP").ok();
     let exit_once_on = env::var("EXIT_ON_OP_ONCE").ok();
+    let lib_error_once_on = env::var("LIB_ERROR_ON_OP_ONCE").ok();
+    let lib_error_code = env::var("LIB_ERROR_CODE")
+        .ok()
+        .and_then(|v| v.parse::<u32>().ok())
+        .unwrap_or(2);
     let trace_path = env::var("TRACE_PATH").ok();
 
     let stdin = std::io::stdin();
@@ -43,6 +48,23 @@ fn main() -> io::Result<()> {
             loop {
                 thread::sleep(Duration::from_secs(1));
             }
+        }
+        if lib_error_once_on
+            .as_deref()
+            .is_some_and(|expected| expected == op_name)
+            && !trace_contains_marker(&trace_path, &format!("LIB_ERRORED:{op_name}"))
+        {
+            append_trace(&trace_path, format!("LIB_ERRORED:{op_name}"))?;
+            let message = if op_name == "CONNECT" {
+                format!("tscan_connect failed: {lib_error_code} (Connect failed)")
+            } else {
+                format!("{op_name} failed: {lib_error_code}")
+            };
+            write_frame(
+                &mut output,
+                &Response::error(request.id, ErrorCode::LibTscanError as u32, message),
+            )?;
+            continue;
         }
 
         let response = match request.op {
