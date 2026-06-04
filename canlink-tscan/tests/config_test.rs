@@ -1,5 +1,5 @@
-use canlink_hal::BackendConfig;
-use canlink_tscan::TscanDaemonConfig;
+use canlink_hal::{BackendConfig, CanBackend};
+use canlink_tscan::{TSCanBackend, TscanDaemonConfig};
 use std::sync::{Mutex, OnceLock};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -70,5 +70,17 @@ fn config_invalid_backend_parameter_type_is_rejected() {
     );
 
     let result = TscanDaemonConfig::resolve(&backend);
+    assert!(result.is_err());
+}
+
+#[test]
+fn config_invalid_recv_batch_size_is_rejected() {
+    let mut config = BackendConfig::new("tscan");
+    config
+        .parameters
+        .insert("recv_batch_size".into(), toml::Value::Integer(0));
+
+    let mut backend = TSCanBackend::new();
+    let result = backend.initialize(&config);
     assert!(result.is_err());
 }

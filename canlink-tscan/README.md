@@ -92,6 +92,7 @@ request_timeout_ms = 2000
 disconnect_timeout_ms = 3000
 restart_max_retries = 3
 recv_timeout_ms = 0
+recv_batch_size = 100
 # daemon_path = "C:/path/to/canlink-tscan-daemon.exe"
 ```
 
@@ -104,6 +105,11 @@ Priority from high to low:
 3. Built-in defaults
 
 When `use_daemon = false`, the backend falls back to direct DLL calls.
+
+`recv_batch_size` controls how many frames `receive_message()` drains from the
+LibTSCAN FIFO per poll before serving frames from an internal pending queue. The
+default `100` matches the batch-drain style commonly used by LibTSCAN examples
+and avoids starving low-frequency target frames when the bus is busy.
 
 ## Related Crates
 
@@ -207,6 +213,7 @@ request_timeout_ms = 2000
 disconnect_timeout_ms = 3000
 restart_max_retries = 3
 recv_timeout_ms = 0
+recv_batch_size = 100
 # daemon_path = "C:/path/to/canlink-tscan-daemon.exe"
 ```
 
@@ -219,6 +226,8 @@ recv_timeout_ms = 0
 3. 内置默认值
 
 当 `use_daemon = false` 时，后端会回退到直接 DLL 调用路径。
+
+`recv_batch_size` 控制 `receive_message()` 每次从 LibTSCAN FIFO 批量抽取多少帧，并先放入内部待处理队列，再按现有单帧 API 逐帧返回。默认值为 `100`，用于贴近 LibTSCAN 常见批量读取方式，避免繁忙总线上低频目标帧长期抽不到。
 
 ## 相关包
 

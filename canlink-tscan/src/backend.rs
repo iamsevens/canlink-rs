@@ -17,11 +17,12 @@ use std::ptr;
 use std::thread;
 use std::time::Duration;
 
-use crate::config::TscanDaemonConfig;
+use crate::config::{resolve_recv_batch_size, TscanDaemonConfig};
 use crate::convert::{from_tlibcan, from_tlibcanfd, to_tlibcan, to_tlibcanfd};
 use crate::daemon::client::{DaemonClient, InitParams};
 use crate::daemon::{CanFdFrame, CanFrame, ConnectResult, Op, RecvCanResult, RecvCanfdResult};
 use crate::error::{check_error, format_libtscan_error, is_recoverable_connect_error};
+use std::collections::VecDeque;
 
 const CONNECT_RECOVERY_DELAY_MS: u64 = 200;
 
@@ -49,6 +50,8 @@ pub struct TSCanBackend {
     supports_canfd: bool,
     device_serial: Option<String>,
     recv_timeout_ms: u64,
+    recv_batch_size: u8,
+    pending_rx: VecDeque<CanMessage>,
 }
 
 impl TSCanBackend {
@@ -65,6 +68,8 @@ impl TSCanBackend {
             supports_canfd: false,
             device_serial: None,
             recv_timeout_ms: 0,
+            recv_batch_size: 1,
+            pending_rx: VecDeque::new(),
         }
     }
 
@@ -84,6 +89,7 @@ impl TSCanBackend {
         self.opened_channels = 0;
         self.supports_canfd = false;
         self.device_serial = None;
+        self.pending_rx.clear();
     }
 
     fn connect_device_direct(&mut self) -> CanResult<()> {
@@ -190,6 +196,75 @@ impl TSCanBackend {
                 current: "no daemon handle".to_string(),
             })
     }
+
+    fn fill_pending_rx_direct(&mut self, channel: u8) {
+        let batch_size = usize::from(self.recv_batch_size.max(1));
+        unsafe {
+            if self.supports_canfd {
+                let mut canfd_buffer = vec![TLIBCANFD::default(); batch_size];
+                let mut canfd_size = batch_size as s32;
+                let result = tsfifo_receive_canfd_msgs(
+                    self.device_handle,
+                    canfd_buffer.as_mut_ptr(),
+                    &mut canfd_size,
+                    channel,
+                    ONLY_RX_MESSAGES,
+                );
+                if result == 0 {
+                    for frame in canfd_buffer.iter().take(canfd_size.max(0) as usize) {
+                        self.pending_rx.push_back(from_tlibcanfd(frame));
+                    }
+                }
+            }
+
+            let mut can_buffer = vec![TLIBCAN::default(); batch_size];
+            let mut can_size = batch_size as s32;
+            let result = tsfifo_receive_can_msgs(
+                self.device_handle,
+                can_buffer.as_mut_ptr(),
+                &mut can_size,
+                channel,
+                ONLY_RX_MESSAGES,
+            );
+            if result == 0 {
+                for frame in can_buffer.iter().take(can_size.max(0) as usize) {
+                    self.pending_rx.push_back(from_tlibcan(frame));
+                }
+            }
+        }
+    }
+
+    fn fill_pending_rx_daemon(&mut self, channel: u8) -> CanResult<()> {
+        let batch_size = self.recv_batch_size.max(1);
+        let supports_canfd = self.supports_canfd;
+        let recv_timeout_ms = self.recv_timeout_ms;
+        let handle = self.daemon_handle()?;
+
+        if supports_canfd {
+            let fd = self.daemon_mut()?.request_auto(Op::RecvCanfd {
+                handle,
+                channel,
+                max_count: batch_size,
+                timeout_ms: recv_timeout_ms,
+            })?;
+            let recv: RecvCanfdResult = fd.decode_data()?;
+            for frame in recv.messages {
+                self.pending_rx.push_back(canfd_frame_to_message(&frame)?);
+            }
+        }
+
+        let can = self.daemon_mut()?.request_auto(Op::RecvCan {
+            handle,
+            channel,
+            max_count: batch_size,
+            timeout_ms: recv_timeout_ms,
+        })?;
+        let recv: RecvCanResult = can.decode_data()?;
+        for frame in recv.messages {
+            self.pending_rx.push_back(can_frame_to_message(&frame)?);
+        }
+        Ok(())
+    }
 }
 
 impl Default for TSCanBackend {
@@ -204,6 +279,7 @@ impl CanBackend for TSCanBackend {
 
         let daemon_cfg = TscanDaemonConfig::resolve(config)?;
         self.recv_timeout_ms = daemon_cfg.recv_timeout_ms;
+        self.recv_batch_size = resolve_recv_batch_size(config)?;
 
         if daemon_cfg.use_daemon {
             let mut daemon = DaemonClient::connect(&daemon_cfg, InitParams::default())?;
@@ -357,71 +433,13 @@ impl CanBackend for TSCanBackend {
             .find(|&ch| (self.opened_channels & (1 << ch)) != 0)
             .ok_or(CanError::ChannelNotOpen { channel: 0 })?;
 
-        match self.mode {
-            BackendMode::Direct => unsafe {
-                if self.supports_canfd {
-                    let mut canfd_buffer = [TLIBCANFD::default(); 1];
-                    let mut canfd_size: s32 = 1;
-                    let result = tsfifo_receive_canfd_msgs(
-                        self.device_handle,
-                        canfd_buffer.as_mut_ptr(),
-                        &mut canfd_size,
-                        channel,
-                        ONLY_RX_MESSAGES,
-                    );
-                    if result == 0 && canfd_size > 0 {
-                        return Ok(Some(from_tlibcanfd(&canfd_buffer[0])));
-                    }
-                }
-
-                let mut can_buffer = [TLIBCAN::default(); 1];
-                let mut can_size: s32 = 1;
-                let result = tsfifo_receive_can_msgs(
-                    self.device_handle,
-                    can_buffer.as_mut_ptr(),
-                    &mut can_size,
-                    channel,
-                    ONLY_RX_MESSAGES,
-                );
-                if result == 0 && can_size > 0 {
-                    Ok(Some(from_tlibcan(&can_buffer[0])))
-                } else {
-                    Ok(None)
-                }
-            },
-            BackendMode::Daemon => {
-                let supports_canfd = self.supports_canfd;
-                let recv_timeout_ms = self.recv_timeout_ms;
-                let handle = self.daemon_handle()?;
-                let daemon = self.daemon_mut()?;
-
-                if supports_canfd {
-                    let fd = daemon.request_auto(Op::RecvCanfd {
-                        handle,
-                        channel,
-                        max_count: 1,
-                        timeout_ms: recv_timeout_ms,
-                    })?;
-                    let recv: RecvCanfdResult = fd.decode_data()?;
-                    if let Some(frame) = recv.messages.first() {
-                        return Ok(Some(canfd_frame_to_message(frame)?));
-                    }
-                }
-
-                let can = daemon.request_auto(Op::RecvCan {
-                    handle,
-                    channel,
-                    max_count: 1,
-                    timeout_ms: recv_timeout_ms,
-                })?;
-                let recv: RecvCanResult = can.decode_data()?;
-                if let Some(frame) = recv.messages.first() {
-                    Ok(Some(can_frame_to_message(frame)?))
-                } else {
-                    Ok(None)
-                }
+        if self.pending_rx.is_empty() {
+            match self.mode {
+                BackendMode::Direct => self.fill_pending_rx_direct(channel),
+                BackendMode::Daemon => self.fill_pending_rx_daemon(channel)?,
             }
         }
+        Ok(self.pending_rx.pop_front())
     }
 
     fn open_channel(&mut self, channel: u8) -> CanResult<()> {
@@ -457,6 +475,7 @@ impl CanBackend for TSCanBackend {
         }
 
         self.opened_channels |= 1 << channel;
+        self.pending_rx.clear();
         Ok(())
     }
 
@@ -487,6 +506,7 @@ impl CanBackend for TSCanBackend {
         }
 
         self.opened_channels &= !(1 << channel);
+        self.pending_rx.clear();
         Ok(())
     }
 

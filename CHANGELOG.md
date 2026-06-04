@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+#### LibTSCAN Receive FIFO Drain
+- Added batched FIFO draining for `TSCanBackend::receive_message()` with an internal pending-frame queue.
+- Added `recv_batch_size` configuration, defaulting to `100`, to avoid starving low-frequency target frames on busy CAN buses.
+- Daemon and direct backends now request/drain more than one frame per receive poll while preserving the single-frame `CanBackend` API.
+
 ## [0.3.5] - 2026-06-04
 
 ### Fixed

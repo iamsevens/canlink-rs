@@ -123,7 +123,20 @@ fn main() -> io::Result<()> {
             Op::ConfigCanfdBaudrate { .. } => Response::ok_empty(request.id),
             Op::SendCan { .. } => Response::ok_empty(request.id),
             Op::SendCanfd { .. } => Response::ok_empty(request.id),
-            Op::RecvCan { .. } => Response::ok(request.id, serde_json::json!({ "messages": [] })),
+            Op::RecvCan { max_count, .. } => {
+                let count = stub_recv_count("STUB_RECV_CAN_MESSAGES").min(max_count as usize);
+                let messages = (0..count)
+                    .map(|index| {
+                        serde_json::json!({
+                            "id": 0x100 + index as u32,
+                            "is_ext": false,
+                            "data": [index as u8],
+                            "timestamp_us": null,
+                        })
+                    })
+                    .collect::<Vec<_>>();
+                Response::ok(request.id, serde_json::json!({ "messages": messages }))
+            }
             Op::RecvCanfd { .. } => Response::ok(request.id, serde_json::json!({ "messages": [] })),
             Op::GetCapability { .. } => Response::ok_data(
                 request.id,
@@ -183,4 +196,11 @@ fn trace_contains_marker(path: &Option<String>, marker: &str) -> bool {
     std::fs::read_to_string(path)
         .map(|content| content.lines().any(|line| line.trim() == marker))
         .unwrap_or(false)
+}
+
+fn stub_recv_count(env_name: &str) -> usize {
+    env::var(env_name)
+        .ok()
+        .and_then(|value| value.trim().parse::<usize>().ok())
+        .unwrap_or(0)
 }

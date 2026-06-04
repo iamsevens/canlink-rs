@@ -10,6 +10,7 @@ const DEFAULT_REQUEST_TIMEOUT_MS: u64 = 2000;
 const DEFAULT_DISCONNECT_TIMEOUT_MS: u64 = 3000;
 const DEFAULT_RESTART_MAX_RETRIES: u32 = 3;
 const DEFAULT_RECV_TIMEOUT_MS: u64 = 0;
+const DEFAULT_RECV_BATCH_SIZE: u8 = 100;
 
 #[derive(Debug, Clone, Deserialize, Default)]
 /// File-based daemon configuration loaded from `canlink-tscan.toml`.
@@ -129,6 +130,46 @@ impl TscanDaemonConfig {
     }
 }
 
+pub(crate) fn resolve_recv_batch_size(backend: &BackendConfig) -> CanResult<u8> {
+    let mut value = DEFAULT_RECV_BATCH_SIZE;
+
+    if let Some(file_value) = read_recv_batch_size_from_file(Path::new(DEFAULT_CONFIG_FILE))? {
+        value = file_value;
+    }
+    if let Some(backend_value) = read_u8(backend, "recv_batch_size")? {
+        value = backend_value;
+    }
+
+    Ok(value)
+}
+
+fn read_recv_batch_size_from_file(path: &Path) -> CanResult<Option<u8>> {
+    if !path.exists() {
+        return Ok(None);
+    }
+
+    let text = std::fs::read_to_string(path).map_err(|err| CanError::ConfigError {
+        reason: format!("failed to read '{}': {err}", path.display()),
+    })?;
+    let parsed: toml::Value = toml::from_str(&text).map_err(|err| CanError::ConfigError {
+        reason: format!("failed to parse '{}': {err}", path.display()),
+    })?;
+    let Some(value) = parsed.get("recv_batch_size") else {
+        return Ok(None);
+    };
+    let raw = value.as_integer().ok_or(CanError::InvalidParameter {
+        parameter: "recv_batch_size".to_string(),
+        reason: "expected integer".to_string(),
+    })?;
+    if raw <= 0 || raw > u8::MAX as i64 {
+        return Err(CanError::InvalidParameter {
+            parameter: "recv_batch_size".to_string(),
+            reason: "must be in 1..=255".to_string(),
+        });
+    }
+    Ok(Some(raw as u8))
+}
+
 fn read_bool(cfg: &BackendConfig, key: &str) -> CanResult<Option<bool>> {
     match cfg.parameters.get(key) {
         None => Ok(None),
@@ -183,6 +224,20 @@ fn read_u32(cfg: &BackendConfig, key: &str) -> CanResult<Option<u32>> {
             });
         }
         return Ok(Some(v as u32));
+    }
+    Ok(None)
+}
+
+fn read_u8(cfg: &BackendConfig, key: &str) -> CanResult<Option<u8>> {
+    let value = read_u64(cfg, key)?;
+    if let Some(v) = value {
+        if v == 0 || v > u8::MAX as u64 {
+            return Err(CanError::InvalidParameter {
+                parameter: key.to_string(),
+                reason: "must be in 1..=255".to_string(),
+            });
+        }
+        return Ok(Some(v as u8));
     }
     Ok(None)
 }
